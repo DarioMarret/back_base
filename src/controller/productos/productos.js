@@ -2,7 +2,7 @@ import empty from "is-empty"
 import XLSX from "xlsx"
 import Productos from "../../model/Productos/Productos"
 import path from "path"
-import fs from "fs/promises"
+import fs from "fs"
 import db from "../../database/conexion_sequelize"
 import sequelize from "sequelize"
 
