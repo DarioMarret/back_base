@@ -33,7 +33,7 @@ export async function ListarProducto(req, res) {
 }
 export async function CrearProductounitario(req, res) {
     try {
-        const {id_categoria,producto, precio_venta, porcentaje_iva, empresa  } = req.body
+        const {id_categoria, producto, precio_venta, porcentaje_iva, empresa  } = req.body
         var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
         if (!ress) {
             Productos.create({
@@ -43,8 +43,8 @@ export async function CrearProductounitario(req, res) {
                 porcentaje_iva: porcentaje_iva,
                 empresa
             }).then((response) => {
-                count += 1
                 console.log(response);
+                res.json({success: true, data: response})
             }).catch((err) => {
                 console.log("error", err)
             });
@@ -74,7 +74,8 @@ async function LeerExcel(ruta, res, empresa) {
     var count = 0
     for (let index = 0; index < dataExcel.length; index++) {
         let producto = dataExcel[index].producto
-        var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
+        let precio = Math.round(((dataExcel[index].precio_venta) + Number.EPSILON) * 100) / 100
+        var ress = await VerificarProductoExistente(empresa, producto.toLowerCase(), precio)
         console.log(ress)
         if (!ress) {
             Productos.create({
@@ -86,7 +87,7 @@ async function LeerExcel(ruta, res, empresa) {
             })
             .then((response) => {
                 count += 1
-                console.log(response);
+                console.log("se guardo",response);
             }).catch((err) => {
                 console.log("error", err)
             });
@@ -104,14 +105,16 @@ async function LeerExcel(ruta, res, empresa) {
     })
 
 }
-async function VerificarProductoExistente(empresa, producto) {
-    const response = await Productos.findAll({ where: { empresa, producto }, attributes: ['producto'] })
-    console.log("VerificarProductoExistente",response)
-    if (!empty(response)) {
-        return true;
-    } else {
-        return false;
-    }
+async function VerificarProductoExistente(empresa, producto, precio) {
+    const response = await Productos.findAll({ where: { empresa, producto }, attributes: ['producto','precio_venta'] })
+        // let product = response[0].producto
+        // let preci = response[0].precio_venta
+        // console.log("VerificarProductoExistente",product, preci)
+        if (!empty(response)) {
+            return true;
+        } else {
+            return false;
+        }
 }
 export async function ListarProductoConsiDencia(req, res){
     // jwt.verify(req.token, config.token, async (error, authData)=>{
@@ -119,7 +122,7 @@ export async function ListarProductoConsiDencia(req, res){
             try {
                 const { empresa, busqueda } = req.body;
                 let coinsi = busqueda.toLowerCase()
-                let sql = `SELECT id_categoria, producto, precio_venta, porcentaje_iva, estado FROM esq_productos.producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 10`;
+                let sql = `SELECT id, id_categoria, producto, precio_venta, porcentaje_iva, estado FROM esq_productos.producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 10`;
                 db.query(sql,{type: sequelize.QueryTypes.SELECT}).then((response)=>{
                     console.log(response);
                     if(!empty(response)){

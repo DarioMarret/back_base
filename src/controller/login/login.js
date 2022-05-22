@@ -10,19 +10,18 @@ export async function ValidarLogin(req, res) {
             const x = await bcrypt.compare(contracena, response[0].contracena)
             if (x) {
                 //  jwt.sign({id_usuario}, config.token,  (err, token)=>{
-                if (!err) {
+                // if (!err) {
                     res.json({
-                        token,
                         data: response[0],
                         success: true,
                         msg: 'Bienvenido ' + response[0].usuario
                     })
-                } else {
-                    res.status(500).json({
-                        success: false,
-                        msg: "algo salio mal vuelve a intentar",
-                    })
-                }
+                // } else {
+                //     res.status(500).json({
+                //         success: false,
+                //         msg: "algo salio mal vuelve a intentar",
+                //     })
+                // }
                 //  });
             } else {
                 res.status(401).json({

@@ -1,51 +1,47 @@
 import Sequelize from "sequelize"
 import sequelize from "../../database/conexion_sequelize"
 
-const Reporte = sequelize.define("reporte",{
+const Movimiento = sequelize.define("movimiento",{
     id: {
       primaryKey: true,
       type: Sequelize.INTEGER,
       autoIncrement: true,
     },
-    secuencia:{
+    detalle:{
+        type: Sequelize.STRING(160),
+        defaultValue: Sequelize.NOW
+    },
+    usuario:{
         type: Sequelize.STRING(160),
         allowNull:false,
     },
-    producto:{
-        type: Sequelize.STRING(160),
-        allowNull:false,
-    },
-    precio_venta:{
+    ingreso:{
         type: Sequelize.DECIMAL(10,2),
-        allowNull:false,
+        defaultValue: 0.0
     },
-    cantidad:{
-        type: Sequelize.INTEGER,
-        allowNull:false,
-    },
-    fecha_creacion:{
-        type: Sequelize.STRING,
-        allowNull:false,
+    salida:{
+        type: Sequelize.DECIMAL(10,2),
+        defaultValue: 0.0
     },
     empresa:{
         type: Sequelize.STRING(100),
         allowNull:false,
     },
+    fecha:{
+        type: Sequelize.STRING(160),
+        defaultValue: Sequelize.NOW
+    },
     estado: {
       type: Sequelize.STRING(20),
       defaultValue: "ACTIVO",
     },
-    forma_pago:{
-      type: Sequelize.STRING(100),
-      defaultValue: "EFECTIVO",
-  },
   },
   {
-    tableName:"reporte" ,
+    tableName:"movimiento" ,
     underscored:true,
     timestamps:false,
     schema:"esq_reporte"
   }
 );
 
-export default Reporte;
+export default Movimiento;

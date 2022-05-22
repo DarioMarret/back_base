@@ -1,8 +1,8 @@
 import sequelize from "../../database/conexion_sequelize"
 
 const schema = [
-    {"esquema":"esq_usuario"},
-    {"esquema":"esq_productos"},
+    // {"esquema":"esq_usuario"},
+    // {"esquema":"esq_productos"},
     {"esquema":"esq_reporte"},
   ];
 
