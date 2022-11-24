@@ -16,7 +16,7 @@ import Reporte from './src/router/reporte/reporte'
 import Caja from './src/router/caja/caja'
 
 const app = express();
-const port =5000 // process.env.PORT;
+const port =3001 // process.env.PORT;
 
 app.use(express.urlencoded({ extended: true }))
 app.use(cors());
@@ -35,19 +35,19 @@ app.use("/v1",Reporte)
 app.use("/v1",Caja)
 
 
-const sslserver = https.createServer(
-  {
-    key: fs.readFileSync(
-      path.join(__dirname, "../../conf/bitnami/certs", "server.key")
-    ),
-    cert: fs.readFileSync(
-      path.join(__dirname, "../../conf/bitnami/certs", "server.crt")
-    ),
-  },
-  app
-);
+// const sslserver = https.createServer(
+//   {
+//     key: fs.readFileSync(
+//       path.join(__dirname, "../../conf/bitnami/certs", "server.key")
+//     ),
+//     cert: fs.readFileSync(
+//       path.join(__dirname, "../../conf/bitnami/certs", "server.crt")
+//     ),
+//   },
+//   app
+// );
 
 
-sslserver.listen(port, async() => {
+app.listen(port, async() => {
     console.log(`Server listening on ${port}`);
 });
