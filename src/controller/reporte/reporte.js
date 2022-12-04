@@ -155,7 +155,7 @@ export async function SacarTotalesVentaFechas(req, res) {
 export async function SacarTotalesVenta(empresa, fecha_ini, fecha_fin, estado) {
     try {
         let forma_pago = 'EFECTIVO'
-        let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha_creacion BETWEEN '${fecha_ini}' AND '${fecha_fin}'`
+        let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}'`
         const response = await sql.query(query)
         if(!empty(response[0])){
             console.log("SacarTotalesVenta", response[0])
