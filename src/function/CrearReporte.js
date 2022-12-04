@@ -4,6 +4,7 @@ import { sql } from "../database/conexion"
 import Reporte from "../model/Reporte/Reporte"
 import Caja from "../model/Caja/Caja"
 import Movimiento from "../model/Caja/Movimiento"
+import isEmpty from "is-empty"
 
 // (async ()=>{
 //     try {
@@ -113,3 +114,24 @@ import Movimiento from "../model/Caja/Movimiento"
 //         console.log(error)        
 //     }
 // })()
+
+(async ()=>{
+    try {
+        let empresa = 'luvnoven'
+        let estado = 'ACTIVO'
+        let fecha_ini = '04/12/2022'    
+        let fecha_fin = '04/12/2022'    
+
+        let forma_pago = 'EFECTIVO'
+        let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}'`
+        const response = await sql.query(query)
+        if(!isEmpty(response[0])){
+            console.log("SacarTotalesVenta", response[0][0])
+            // return response[0][0]
+        }else{
+            // return 0
+        }
+    } catch (error) {
+        console.log("ListarReporte", error)
+    }
+})()
