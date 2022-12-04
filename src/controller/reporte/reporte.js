@@ -31,7 +31,7 @@ export async function ListarReporteActual(req, res) {
         const { empresa, fecha } = req.query
         let estado = "CUADRE"
         console.log("fecha", fecha)
-        let query = `SELECT secuencia, fecha_creacion, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago FROM ventas  WHERE empresa = '${empresa}' AND fecha_creacion = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha_creacion, estado, forma_pago`;
+        let query = `SELECT secuencia, fecha_creacion, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago FROM ventas  WHERE empresa = '${empresa}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha_creacion, estado, forma_pago`;
         const respuesta = await sql.query(query)
         if (!empty(respuesta[0])) {
             res.json({
@@ -52,10 +52,10 @@ export async function ListarReporteActual(req, res) {
 }
 
 export async function CrearVenta(req, res) {
-    const { empresa, tienda, secuencial, caja_usuario } = req.body;
+    const { empresa, tienda, secuencial, caja_usuario, forma_pago } = req.body;
     var count = 0;
     for (var index = 0; index < tienda.length; index++) {
-        const { producto, cantidad, precio_venta, forma_pago } = tienda[index];
+        const { producto, cantidad, precio_venta } = tienda[index];
         await sql.query(`INSERT INTO ventas 
         (secuencia, producto, precio_venta, cantidad, fecha_creacion, empresa, estado, forma_pago, caja_usuario) VALUES 
         ('${secuencial}', '${producto}', ${precio_venta}, ${cantidad}, '${moment().format('YYYY-MM-DD HH:mm:ss')}','${empresa}', 'ACTIVO',  '${forma_pago}', '${caja_usuario}')`)
