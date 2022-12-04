@@ -10,8 +10,10 @@ module.exports = {
       NODE_ENV: "production",
       PORT: "3001",
       HOST: "0.0.0.0",
-      BASIC_USERNAME: "",
-      BASIC_PASSWORD: "",
+      USER_DB:"root",
+      PASSWORD_DB:"Marret123456+-*",
+      DATABASE_DB:"facturacion_api",
+      HOST_DB:"localhost",
     },
     env_development: {
       NODE_ENV: "development"
