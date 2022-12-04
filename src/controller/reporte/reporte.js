@@ -1,26 +1,27 @@
 import empty from "is-empty"
 import db from "../../database/conexion_sequelize"
 import sequelize from "sequelize"
-import Reporte from "../../model/Reporte/Reporte";
+// import Reporte from "../../model/Reporte/Reporte";
+import { sql } from "../../database/conexion";
+import moment from "moment";
 
 export async function ListarReporte(req, res) {
     try {
         const { empresa, fecha_ini, fecha_fin } = req.body;
-        let sql = `SELECT * FROM esq_reporte.reporte WHERE empresa = '${empresa}' AND fecha_creacion BETWEEN '${fecha_ini}' and '${fecha_fin}' ORDER BY fecha_creacion`
-        db.query(sql,{type: sequelize.QueryTypes.SELECT}).then((response)=>{
-            console.log("reporte",response);
-            if(!empty(response)){
-                res.json({
-                    success: true,
-                    data: response,
-                    msg:'reporte por fecha',
-                })
-            }else{
-                res.json({msg: "no se encontro reporte"})
-            }
-        }).catch((err)=>{
-            console.log("Error", err);
-        })
+
+        let query = `SELECT * FROM ventas WHERE empresa = '${empresa}' AND fecha_creacion BETWEEN '${fecha_ini}' and '${fecha_fin}' ORDER BY fecha_creacion`
+        const response = await sql.query(query)
+        if (!empty(response[0])) {
+            res.json({
+                success: true,
+                data: response[0],
+            })
+        }else{
+            res.json({
+                success: false,
+                data: response[0],
+            })
+        }
     } catch (error) {
         console.log("ListarReporte", error)
     }
@@ -29,41 +30,36 @@ export async function ListarReporteActual(req, res) {
     try {
         const { empresa, fecha } = req.query
         let estado = "CUADRE"
-        let sql = `SELECT secuencia, fecha_creacion, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago FROM esq_reporte.reporte  WHERE empresa = '${empresa}' AND fecha_creacion = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha_creacion, estado, forma_pago`;
-        db.query(sql,{type: sequelize.QueryTypes.SELECT}).then((response)=>{
-            console.log("reporte",response);
-            if(!empty(response)){
-                res.json({
-                    success: true,
-                    data: response,
-                    msg:'reporte por fecha',
-                })
-            }else{
-                res.json({msg: "no se encontro reporte"})
-            }
-        }).catch((err)=>{
-            console.log("Error", err);
-        })
+        console.log("fecha", fecha)
+        let query = `SELECT secuencia, fecha_creacion, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago FROM ventas  WHERE empresa = '${empresa}' AND fecha_creacion = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha_creacion, estado, forma_pago`;
+        const respuesta = await sql.query(query)
+        if (!empty(respuesta[0])) {
+            res.json({
+                success: true,
+                data: respuesta[0],
+                msg: "reporte actual"
+            })
+        }else{
+            res.json({
+                success: false,
+                data: respuesta[0],
+                msg: "no se encontro reporte"
+            })
+        }
     } catch (error) {
         console.log("ListarReporte", error)
     }
 }
+
 export async function CrearVenta(req, res) {
-    const { empresa, tienda, secuencial, fecha } = req.body;
+    const { empresa, tienda, secuencial, caja_usuario } = req.body;
     var count = 0;
     for (var index = 0; index < tienda.length; index++) {
-        Reporte.create({
-            secuencia:secuencial,
-            producto:tienda[index].producto,
-            precio_venta:tienda[index].precio_venta,
-            cantidad:tienda[index].cantidad,
-            fecha_creacion:fecha,
-            empresa,
-        }) .then((response) => {
-            count += 1
-        }).catch((err) => {
-            console.log(err);
-        });
+        const { producto, cantidad, precio_venta, forma_pago } = tienda[index];
+        await sql.query(`INSERT INTO ventas 
+        (secuencia, producto, precio_venta, cantidad, fecha_creacion, empresa, estado, forma_pago, caja_usuario) VALUES 
+        ('${secuencial}', '${producto}', ${precio_venta}, ${cantidad}, '${moment().format('YYYY-MM-DD HH:mm:ss')}','${empresa}', 'ACTIVO',  '${forma_pago}', '${caja_usuario}')`)
+        count = count + 1;
     }
     if(index === tienda.length){
         res.json({
@@ -81,40 +77,49 @@ export async function ActualizarEstado(req, res) {
         const { editar, forma_pago, estado } = req.body
         const { secuencia, empresa } = editar
         if(!empty(forma_pago) && !empty(estado)){
-            const response = await Reporte.update({ estado, forma_pago }, { where: { secuencia, empresa } });
-            console.log(response)
-            if (!empty(response[0])) {
+            let query = `UPDATE ventas SET estado = '${estado}', forma_pago = '${forma_pago}' WHERE secuencia = '${secuencia}' AND empresa = '${empresa}'`
+            const respuesta = await sql.query(query)
+            if(!empty(respuesta)){
                 res.json({
                     success: true,
-                    data: response[0],
-                    msg: 'reporte Actualizado'
+                    msg: "Se actualizo correctamente el estado"
                 })
             }else{
-                res.json({success: false, msg:"no se pudo actualizar"})
+                res.json({
+                    success: false,
+                    msg: "No se actualizo el estado"
+                })
             }
+
         }else if(!empty(estado)){
-            const response = await Reporte.update({ estado }, { where: { secuencia, empresa } });
-            console.log(response)
-            if (!empty(response[0])) {
+
+            let query = `UPDATE ventas SET estado = '${estado}' WHERE secuencia = '${secuencia}' AND empresa = '${empresa}'`
+            const respuesta = await sql.query(query)
+            console.log("respuesta", respuesta)
+            if(respuesta[0].affectedRows > 0){
                 res.json({
                     success: true,
-                    data: response[0],
-                    msg: 'reporte Actualizado'
+                    msg: "Se actualizo correctamente el estado"
                 })
             }else{
-                res.json({success: false, msg:"no se pudo actualizar"})
+                res.json({
+                    success: false,
+                    msg: "No se actualizo el estado"
+                })
             }
         }else if(!empty(forma_pago)){
-            const response = await Reporte.update({ forma_pago }, { where: { secuencia, empresa } });
-            console.log(response)
-            if (!empty(response[0])) {
+            let query = `UPDATE ventas SET forma_pago = '${forma_pago}' WHERE secuencia = '${secuencia}' AND empresa = '${empresa}'`
+            const respuesta = await sql.query(query)
+            if(!empty(respuesta)){
                 res.json({
                     success: true,
-                    data: response[0],
-                    msg: 'reporte Actualizado'
+                    msg: "Se actualizo correctamente el estado"
                 })
             }else{
-                res.json({success: false, msg:"no se pudo actualizar"})
+                res.json({
+                    success: false,
+                    msg: "No se actualizo el estado"
+                })
             }
         }
 
@@ -148,20 +153,15 @@ export async function SacarTotalesVentaFechas(req, res) {
 
 export async function SacarTotalesVenta(empresa, fecha_ini, fecha_fin, estado) {
     try {
-        return new Promise(function (resolve, reject) {
-            let forma_pago = 'EFECTIVO'
-            let sql = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM esq_reporte.reporte WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha_creacion BETWEEN '${fecha_ini}' AND '${fecha_fin}'`
-            db.query(sql,{type: sequelize.QueryTypes.SELECT}).then((response)=>{
-                if(!empty(response)){
-                    console.log("SacarTotalesVentaFechas",response[0]);
-                    resolve(response[0])
-                }else{
-                    resolve(0)
-                }
-            }).catch((err)=>{
-                console.log("Error", err);
-            })
-        })
+        let forma_pago = 'EFECTIVO'
+        let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha_creacion BETWEEN '${fecha_ini}' AND '${fecha_fin}'`
+        const response = await sql.query(query)
+        if(!empty(response[0])){
+            console.log("SacarTotalesVenta", response[0])
+            return response[0][0]
+        }else{
+            return 0
+        }
     } catch (error) {
         console.log("ListarReporte", error)
     }

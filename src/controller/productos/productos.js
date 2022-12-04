@@ -3,53 +3,54 @@ import XLSX from "xlsx"
 import Productos from "../../model/Productos/Productos"
 import path from "path"
 import fs from "fs"
-import db from "../../database/conexion_sequelize"
-import sequelize from "sequelize"
+// import db from "../../database/conexion_sequelize"
+// import sequelize from "sequelize"
+import { sql } from "../../database/conexion"
+import moment from "moment"
 
 export async function ListarProducto(req, res) {
-    // jwt.verify(req.token, config.token, async (error, authData)=>{
-    //     if(!error){
     try {
         const { empresa } = req.query;
-        const response = await Productos.findAll({ where: { empresa } })
-        if (!empty(response)) {
+        const response = await sql.query(`SELECT * FROM productos WHERE empresa = ${empresa}`)
+        if (!empty(response[0])) {
             res.json({
                 success: true,
-                data: response,
+                data: response[0],
             })
         } else {
             res.json({
                 success: false,
-                data: response,
+                data: response[0],
             })
         }
     } catch (error) {
         console.log("ListarProducto", error)
     }
-    //     }else{
-    //         res.json(errorToken)
-    //     } 
-    // })
 }
+
 export async function CrearProductounitario(req, res) {
     try {
-        const {id_categoria, producto, precio_venta, porcentaje_iva, empresa  } = req.body
+        const {producto, precio_venta, porcentaje_iva, empresa } = req.body
         var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
-        if (!ress) {
-            Productos.create({
-                id_categoria,
-                producto: producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,""),
-                precio_venta: Math.round(((precio_venta) + Number.EPSILON) * 100) / 100,
-                porcentaje_iva: porcentaje_iva,
-                empresa
-            }).then((response) => {
-                console.log(response);
-                res.json({success: true, data: response})
-            }).catch((err) => {
-                console.log("error", err)
-            });
+        if (ress) {
+            let auxiliar = Random(1, 999999999)
+            sql.query(`INSERT INTO producto
+            (auxiliar, producto, precio_venta, porcentaje_iva, empresa, estado, fechaCreacion, fechaUpdate) VALUES 
+            (
+                '${auxiliar}',
+                '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', 
+                ${precio_venta}, ${porcentaje_iva}, '${empresa}', 'A', 
+                '${moment().format('YYYY-MM-DD HH:mm:ss')}', 
+                '${moment().format('YYYY-MM-DD HH:mm:ss')}')`)
+            res.json({
+                success: true,
+                msg: "Producto creado"
+            })
         }else{
-            res.json({success: false, msg: "producto ya exite es su lista"})
+            res.json({
+                success: false, 
+                msg: "producto ya exite es su lista"
+            })
         }
     } catch (error) {
         console.log(error)
@@ -65,6 +66,7 @@ export async function CargarProductosDesdeExcel(req, res) {
         // return res.status(200).send({ message : 'File upload' })
     })
 }
+
 async function LeerExcel(ruta, res, empresa) {
     const workbook = XLSX.readFile(ruta);
     const workbookSheets = workbook.SheetNames;
@@ -77,20 +79,20 @@ async function LeerExcel(ruta, res, empresa) {
         let precio = Math.round(((dataExcel[index].precio_venta) + Number.EPSILON) * 100) / 100
         var ress = await VerificarProductoExistente(empresa, producto.toLowerCase(), precio)
         console.log(ress)
-        if (!ress) {
-            Productos.create({
-                id_categoria: dataExcel[index].id_categoria,
-                producto: dataExcel[index].producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,""),
-                precio_venta: Math.round(((dataExcel[index].precio_venta) + Number.EPSILON) * 100) / 100,
-                porcentaje_iva: dataExcel[index].porcentaje_iva,
-                empresa
-            })
-            .then((response) => {
-                count += 1
-                console.log("se guardo",response);
-            }).catch((err) => {
-                console.log("error", err)
-            });
+        if (ress) {
+            let auxiliar = Random(1, 999999999)
+            sql.query(`INSERT INTO producto
+            (auxiliar, producto, precio_venta, porcentaje_iva, empresa, estado, fechaCreacion, fechaUpdate) VALUES
+            (
+                '${auxiliar}',
+                '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}',
+                ${precio}, 
+                ${dataExcel[index].porcentaje_iva}, 
+                '${empresa}', 
+                'A',
+                '${moment().format('YYYY-MM-DD HH:mm:ss')}',
+                '${moment().format('YYYY-MM-DD HH:mm:ss')}')`)
+            count++
         }
     }
     fs.unlink(ruta)
@@ -105,60 +107,58 @@ async function LeerExcel(ruta, res, empresa) {
     })
 
 }
+
 async function VerificarProductoExistente(empresa, producto, precio) {
-    const response = await Productos.findAll({ where: { empresa, producto }, attributes: ['producto','precio_venta'] })
-        // let product = response[0].producto
-        // let preci = response[0].precio_venta
-        // console.log("VerificarProductoExistente",product, preci)
-        if (!empty(response)) {
-            return true;
+    try {
+       const existe = await sql.query(`SELECT * FROM producto WHERE empresa = '${empresa}' AND producto = '${producto}'`)
+        if (existe[0].length > 0) {
+            return false
         } else {
-            return false;
+            return true
         }
+    } catch (error) {
+        console.log(error)
+    }
 }
+
 export async function ListarProductoConsiDencia(req, res){
-    // jwt.verify(req.token, config.token, async (error, authData)=>{
-    // if(!error){
-            try {
-                const { empresa, busqueda } = req.body;
-                let coinsi = busqueda.toLowerCase()
-                let sql = `SELECT id, id_categoria, producto, precio_venta, porcentaje_iva, estado FROM esq_productos.producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 10`;
-                db.query(sql,{type: sequelize.QueryTypes.SELECT}).then((response)=>{
-                    console.log(response);
-                    if(!empty(response)){
-                        res.json({
-                            success: true,
-                            data: response,
-                            msg:'ListarProductoConsiDencia',
-                        })
-                    }else{
-                        res.json({msg: "no se encontro coinsidencia"})
-                    }
-                }).catch((err)=>{
-                    console.log("Error", err);
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        // }else{
-        //     res.json(errorToken)
-        // }
-    // })
+    try {
+        const { empresa, busqueda } = req.body;
+        // let coinsi = busqueda.toLowerCase()
+        let query = `SELECT id, producto, precio_venta, porcentaje_iva, estado FROM producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 12`;
+        const response = await sql.query(query)
+        // console.log(response[0])
+        if (!empty(response[0])) {
+            res.json({
+                success: true,
+                data: response[0],
+            })
+        }else{
+            res.json({
+                success: false,
+                data: response[0],
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 export async function EliminarProductoPorId(req, res){
     try {
         const { id, empresa } = req.query;
-        const response = await Productos.destroy({where: {id, empresa}})
-        if (!empty(response)){
+        const response = await sql.query(`UPDATE producto SET estado = 'I', fechaUpdate = '${moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE id = ${id} AND empresa = '${empresa}'`)
+        if (response[0].affectedRows > 0) {
             res.json({
                 success: true,
-                data: response,
-                msg:'Producto removido',
+                msg: "Producto eliminado"
             })
         }else{
-           res.json({success:false, msg:"id producto no existe"}) 
-        }   
+            res.json({
+                success: false,
+                msg: "No se pudo eliminar el producto"
+            })
+        }
     } catch (error) {
         console.log("EliminarProductoPorId", error);
     }

@@ -6,12 +6,16 @@ import fileUpload from 'express-fileupload';
 
 import 'dotenv/config'
 import './database/conexion_sequelize'
+import './database/conexion'
+import './function/CrearReporte'
 // import './src/model/index'
 
 import Login from './router/login/login'
 import Productos from './router/productos/productos'
 import Reporte from './router/reporte/reporte'
 import Caja from './router/caja/caja'
+
+import Newlogin from './router/login/newLogin'
 
 const app = express();
 const port =3001 // process.env.PORT;
@@ -32,6 +36,8 @@ app.use("/v1",Productos)
 app.use("/v1",Reporte)
 app.use("/v1",Caja)
 
+app.use("/v1",Newlogin)
+
 app.listen(port, async() => {
-    console.log(`Server listening on ${port}`);
-});
+    console.log(`Server listening on ${port}`)
+})
