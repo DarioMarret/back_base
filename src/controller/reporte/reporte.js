@@ -31,7 +31,7 @@ export async function ListarReporteActual(req, res) {
         const { empresa, fecha } = req.query
         let estado = "CUADRE"
         console.log("fecha", fecha)
-        let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago, fecha_creacion FROM ventas  WHERE empresa = '${empresa}' AND fecha = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha, estado, forma_pago`;
+        let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago, fecha_creacion FROM ventas  WHERE empresa = '${empresa}' AND fecha = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha, estado, forma_pago, fecha_creacion`;
         const respuesta = await sql.query(query)
         if (!empty(respuesta[0])) {
             res.json({
