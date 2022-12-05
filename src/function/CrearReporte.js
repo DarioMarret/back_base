@@ -5,6 +5,7 @@ import Reporte from "../model/Reporte/Reporte"
 import Caja from "../model/Caja/Caja"
 import Movimiento from "../model/Caja/Movimiento"
 import isEmpty from "is-empty"
+import { CuadreIni, TotalMovimientos, TotalVentas, TotalVentasTarjeta, TotalVentasTransferencia } from "./cuadreCaja"
 
 // (async ()=>{
 //     try {
@@ -119,18 +120,26 @@ import isEmpty from "is-empty"
     try {
         let empresa = 'luvnoven'
         let estado = 'ACTIVO'
-        let fecha_ini = '04/12/2022'    
-        let fecha_fin = '04/12/2022'    
+        let fecha_ini = '05/12/2022'    
+        const ventaTotal = await TotalVentas(empresa, estado, fecha_ini)
+        console.log("TotalVentas",ventaTotal)
 
-        let forma_pago = 'EFECTIVO'
-        let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}'`
-        const response = await sql.query(query)
-        if(!isEmpty(response[0])){
-            console.log("SacarTotalesVenta", response[0][0])
-            // return response[0][0]
-        }else{
-            // return 0
-        }
+        const respuesta2 = await TotalVentasTarjeta(empresa, estado, fecha_ini)//Total de vetnas respuesta2
+        console.log("TotalVentasTarjeta", respuesta2)
+
+
+        const response3 = await TotalVentasTransferencia(empresa, estado, fecha_ini)//Total de vetnas respuesta3
+        console.log("TotalVentasTransferencia", response3)
+
+        const {ingreso, salida} = await TotalMovimientos(empresa, estado, fecha_ini)//Total de vetnas respuesta3
+        console.log("TotalMovimientos", "Ingreso:",ingreso, "Salida:",salida)
+
+        const respuesta5 = await CuadreIni(empresa)//Total de vetnas respuesta4
+        console.log("CuadreIni", respuesta5)
+
+        let cuadre_total = ventaTotal + ingreso + respuesta5 - salida
+        console.log("CuadreTotal", parseFloat((cuadre_total).toFixed(2)))
+
     } catch (error) {
         console.log("ListarReporte", error)
     }

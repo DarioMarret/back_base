@@ -8,6 +8,7 @@ import { SacarTotalesVenta } from "../reporte/reporte";
 // import Movimiento from "../../model/Caja/Movimiento";
 import { sql } from "../../database/conexion";
 import moment from "moment";
+import { CuadreIni, TotalMovimientos, TotalVentas, TotalVentasTarjeta, TotalVentasTransferencia } from "../../function/cuadreCaja";
 
 export async function ListarCajas(req, res) {
     try {
@@ -55,30 +56,34 @@ export async function CrearCuadreCaja(req, res) {
     try {
         const { empresa, fecha_cuadre, usuario, estado, conteo } = req.body
         let fecha_ini = fecha_cuadre
-        let fecha_fin = fecha_cuadre
-        const respuesta = await SacarTotalesVenta(empresa, fecha_ini, fecha_fin, estado)
-        console.log("CrearCuadreCaja", parseFloat(respuesta.total_venta))
-        var totalventa = respuesta.total_venta !=null ? parseFloat(respuesta.total_venta) : 0
-        const {ingreso, salida} = await TotalMovimientos(empresa,fecha_cuadre,estado)
-        var ventas = respuesta.total_venta !=null ? parseFloat(respuesta.total_venta) : 0
-        totalventa += ingreso != null ? parseFloat(ingreso) : 0
-        totalventa -= salida != null ? parseFloat(salida) : 0
-        const { venta,  cuadre_total } = await CuadreIni(empresa, estado)
-        totalventa += parseFloat(cuadre_total)
-        console.log("venta:",venta,"total:",cuadre_total)
-        console.log("ventas",ventas)
+        const ventas = await TotalVentas(empresa, estado, fecha_ini)//Total de vetnas respuesta
+        console.log("TotalVentas", ventas)
+
+
+        const ventaTarjeta = await TotalVentasTarjeta(empresa, estado, fecha_ini)//Total de vetnas respuesta2
+        console.log("TotalVentasTarjeta", ventaTarjeta)
+
+        const ventaTransferencia = await TotalVentasTransferencia(empresa, estado, fecha_ini)//Total de vetnas respuesta3
+        console.log("TotalVentasTransferencia", ventaTransferencia)
+
+
+        const {ingreso, salida} = await TotalMovimientos(empresa,fecha_cuadre,estado)//Total de movimientos
+
+        let cuadre_total = ventaTotal + ingreso + respuesta5 - salida
+
+
         res.json({
             success: true,
             data: {
-                total_venta: totalventa,
-                venta: venta,
+                total_venta: parseFloat((cuadre_total).toFixed(2)),
+                venta: ventas,
                 conteo: conteo,
             }
         })
             await sql.query(`INSERT INTO caja 
             (fecha_cuadre, usuario, conteo, venta, cuadre_total, empresa, estado) 
             VALUES 
-            ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventas}', '${totalventa}', '${empresa}', 'ACTIVO')`)
+            ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventas}', '${parseFloat((cuadre_total).toFixed(2))}', '${empresa}', 'ACTIVO')`)
 
             // await Caja.create({fecha_cuadre, usuario, conteo:conteo, venta:ventas, cuadre_total:totalventa, empresa})
             await sql.query(`UPDATE ventas SET estado = 'CUADRE' WHERE empresa = '${empresa}' AND estado = 'ACTIVO'`)
@@ -96,30 +101,6 @@ export async function CrearCuadreCaja(req, res) {
     }
 }
 
-async function TotalMovimientos(empresa,fecha,estado){
-    let query = `SELECT sum(ingreso) AS ingreso, sum(salida) AS salida FROM movimiento  WHERE empresa = '${empresa}' AND fecha = '${fecha}' AND estado = '${estado}'`;
-    const response = await sql.query(query);
-    if(!empty(response[0])){
-        TotalMovimientosCambiarEstado(empresa,fecha)
-        return response[0][0]
-    }else{
-        return {
-            ingreso:0,
-            salida:0
-        }
-    }
-}
-
-async function TotalMovimientosCambiarEstado(empresa,fecha){
-    let estado = "CUADRE"
-    let query = `UPDATE movimiento SET estado = '${estado}' WHERE empresa = '${empresa}' AND fecha = '${fecha}'`;
-    const response = await sql.query(query)
-    if(response[0].affectedRows > 0){
-        return response
-    }else{
-        return false
-    }
-}
 
 export async function CrearVenta(req, res) {
     const { empresa, tienda, secuencial, caja_usuario, forma_pago } = req.body;
@@ -221,18 +202,7 @@ export async function SacarTotalesVentaFechas(req, res) {
     }
 }
 
-export async function CuadreIni(empresa, estado){
-    let query = `SELECT venta, cuadre_total FROM caja  WHERE empresa = '${empresa}' AND estado = '${estado}' ORDER BY id DESC LIMIT 1`;
-    const response = await sql.query(query)
-    if(!empty(response[0])){
-        return response[0][0]
-    }else{
-        return {
-            venta:0,
-            cuadre_total:0
-        }
-    }
-}
+
 
 export async function ActualizaCaja(req, res){
     try {
