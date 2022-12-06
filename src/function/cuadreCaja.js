@@ -86,6 +86,7 @@ export const TotalMovimientos = async (empresa, estado, fecha_ini) =>{
         let query = `SELECT sum(ingreso) AS ingreso, sum(salida) AS salida FROM movimiento WHERE empresa = '${empresa}' AND fechaCreacion = '${fecha_ini}' AND estado = '${estado}'`;
         const response = await sql.query(query)
         if(!isEmpty(response[0])){
+            console.log(response[0][0])
             return {
                 ingreso:parseFloat(response[0][0].ingreso),
                 salida:parseFloat(response[0][0].salida)
