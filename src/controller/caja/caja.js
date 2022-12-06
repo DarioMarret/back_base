@@ -55,7 +55,7 @@ export async function ListarCajaActual(req, res) {
 export async function CrearCuadreCaja(req, res) {
     try {
         const { empresa, fecha_cuadre, usuario, estado, conteo } = req.body
-        let fecha_ini = fecha_cuadre
+        let fecha_ini = fecha_cuadre.split(" ")[0]
         console.log("fecha_ini", fecha_ini)
         console.log("fecha_cuadre", fecha_cuadre)
         console.log("empresa", empresa)

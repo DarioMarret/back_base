@@ -14,11 +14,7 @@ export const TotalVentas = async (empresa, estado, fecha_ini) =>{
         let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha = '${fecha_ini}'`
         const response = await sql.query(query)
         if(!isEmpty(response[0])){
-            if(!isEmpty(response[0][0].total_venta)){
-                return parseFloat(response[0][0].total_venta)
-            }else{
-                return 0
-            }
+            return parseFloat(response[0][0].total_venta)
         }else{
             return 0
         }
