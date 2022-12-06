@@ -14,7 +14,7 @@ export const TotalVentas = async (empresa, estado, fecha_ini) =>{
         let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha = '${fecha_ini}'`
         const response = await sql.query(query)
         if(!isEmpty(response[0])){
-            return parseFloat(response[0][0].total_venta)
+            return !isEmpty(response[0][0].total_venta) ? parseFloat(response[0][0].total_venta) : 0
         }else{
             return 0
         }
@@ -35,11 +35,7 @@ export const TotalVentasTarjeta = async (empresa, estado, fecha_ini) =>{
         let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha = '${fecha_ini}'`
         const response = await sql.query(query)
         if(!isEmpty(response[0])){
-            if(!isEmpty(response[0][0].total_venta)){
-                return parseFloat(response[0][0].total_venta)
-            }else{
-                return 0
-            }
+            return !isEmpty(response[0][0].total_venta) ? parseFloat(response[0][0].total_venta) : 0
         }else{
             return 0
         }
@@ -61,11 +57,7 @@ export const TotalVentasTransferencia = async (empresa, estado, fecha_ini) =>{
         let query = `SELECT SUM(precio_venta * cantidad) AS total_venta FROM ventas WHERE empresa = '${empresa}' AND forma_pago = '${forma_pago}' AND estado = '${estado}' AND fecha = '${fecha_ini}'`
         const response = await sql.query(query)
         if(!isEmpty(response[0])){
-            if(!isEmpty(response[0][0].total_venta)){
-                return parseFloat(response[0][0].total_venta)
-            }else{
-                return 0
-            }
+            return !isEmpty(response[0][0].total_venta) ? parseFloat(response[0][0].total_venta) : 0
         }else{
             return 0
         }
@@ -110,7 +102,7 @@ export async function CuadreIni(empresa){
     let query = `SELECT venta, cuadre_total FROM caja  WHERE empresa = '${empresa}' ORDER BY id DESC LIMIT 1`;
     const response = await sql.query(query)
     if(!isEmpty(response[0])){
-        return parseFloat(response[0][0].cuadre_total)
+        return !isEmpty(response[0][0].cuadre_total) ? parseFloat(response[0][0].cuadre_total): 0
     }else{
         return 0
     }
