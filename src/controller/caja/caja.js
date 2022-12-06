@@ -69,7 +69,10 @@ export async function CrearCuadreCaja(req, res) {
 
         const {ingreso, salida} = await TotalMovimientos(empresa,fecha_cuadre,estado)//Total de movimientos
 
-        let cuadre_total = ventaTotal + ingreso + respuesta5 - salida
+        const respuesta5 = await CuadreIni(empresa)//Total de vetnas respuesta4
+        console.log("CuadreIni", respuesta5)
+
+        let cuadre_total = ventas + ingreso + respuesta5 - salida
 
 
         res.json({
