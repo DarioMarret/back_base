@@ -56,37 +56,39 @@ export async function CrearCuadreCaja(req, res) {
     try {
         const { empresa, fecha_cuadre, usuario, estado, conteo } = req.body
         let fecha_ini = fecha_cuadre
-        const ventas = await TotalVentas(empresa, estado, fecha_ini)//Total de vetnas respuesta
-        console.log("TotalVentas", ventas)
+        const ventaTotal = await TotalVentas(empresa, estado, fecha_ini)
+        console.log("TotalVentas",ventaTotal)
+
+        const respuesta2 = await TotalVentasTarjeta(empresa, estado, fecha_ini)//Total de vetnas respuesta2
+        console.log("TotalVentasTarjeta", respuesta2)
 
 
-        const ventaTarjeta = await TotalVentasTarjeta(empresa, estado, fecha_ini)//Total de vetnas respuesta2
-        console.log("TotalVentasTarjeta", ventaTarjeta)
+        const response3 = await TotalVentasTransferencia(empresa, estado, fecha_ini)//Total de vetnas respuesta3
+        console.log("TotalVentasTransferencia", response3)
 
-        const ventaTransferencia = await TotalVentasTransferencia(empresa, estado, fecha_ini)//Total de vetnas respuesta3
-        console.log("TotalVentasTransferencia", ventaTransferencia)
-
-
-        const {ingreso, salida} = await TotalMovimientos(empresa,fecha_cuadre,estado)//Total de movimientos
+        const {ingreso, salida} = await TotalMovimientos(empresa, estado, fecha_ini)//Total de vetnas respuesta3
+        console.log("TotalMovimientos", "Ingreso:",ingreso, "Salida:",salida)
 
         const respuesta5 = await CuadreIni(empresa)//Total de vetnas respuesta4
         console.log("CuadreIni", respuesta5)
 
-        let cuadre_total = ventas + ingreso + respuesta5 - salida
+        console.log("CuadreTotal", parseFloat((cuadre_total).toFixed(2)))
+        let cuadre_total = ventaTotal + ingreso + respuesta5 - salida
+
 
 
         res.json({
             success: true,
             data: {
                 total_venta: parseFloat((cuadre_total).toFixed(2)),
-                venta: ventas,
+                venta: ventaTotal,
                 conteo: conteo,
             }
         })
             await sql.query(`INSERT INTO caja 
             (fecha_cuadre, usuario, conteo, venta, cuadre_total, empresa, estado) 
             VALUES 
-            ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventas}', '${parseFloat((cuadre_total).toFixed(2))}', '${empresa}', 'ACTIVO')`)
+            ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventaTotal}', '${parseFloat((cuadre_total).toFixed(2))}', '${empresa}', 'ACTIVO')`)
 
             // await Caja.create({fecha_cuadre, usuario, conteo:conteo, venta:ventas, cuadre_total:totalventa, empresa})
             await sql.query(`UPDATE ventas SET estado = 'CUADRE' WHERE empresa = '${empresa}' AND estado = 'ACTIVO'`)
