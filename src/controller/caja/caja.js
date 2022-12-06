@@ -56,6 +56,9 @@ export async function CrearCuadreCaja(req, res) {
     try {
         const { empresa, fecha_cuadre, usuario, estado, conteo } = req.body
         let fecha_ini = fecha_cuadre
+        console.log("fecha_ini", fecha_ini)
+        console.log("fecha_cuadre", fecha_cuadre)
+        console.log("empresa", empresa)
         const ventaTotal = await TotalVentas(empresa, estado, fecha_ini)
         console.log("TotalVentas",ventaTotal)
 
@@ -72,8 +75,8 @@ export async function CrearCuadreCaja(req, res) {
         const respuesta5 = await CuadreIni(empresa)//Total de vetnas respuesta4
         console.log("CuadreIni", respuesta5)
 
-        console.log("CuadreTotal", parseFloat((cuadre_total).toFixed(2)))
         let cuadre_total = ventaTotal + ingreso + respuesta5 - salida
+        console.log("CuadreTotal", parseFloat((cuadre_total).toFixed(2)))
 
 
 
