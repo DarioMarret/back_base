@@ -118,9 +118,9 @@ import { CuadreIni, TotalMovimientos, TotalVentas, TotalVentasTarjeta, TotalVent
 
 (async ()=>{
     try {
-        let empresa = 'luvnoven'
+        let empresa = 'luielei'
         let estado = 'ACTIVO'
-        let fecha_ini = '05/12/2022'    
+        let fecha_ini = '06/12/2022'    
         const ventaTotal = await TotalVentas(empresa, estado, fecha_ini)
         console.log("TotalVentas",ventaTotal)
 

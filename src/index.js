@@ -7,7 +7,7 @@ import fileUpload from 'express-fileupload';
 import 'dotenv/config'
 // import './database/conexion_sequelize'
 import './database/conexion'
-// import './function/CrearReporte'
+import './function/CrearReporte'
 // import './src/model/index'
 
 import Login from './router/login/login'

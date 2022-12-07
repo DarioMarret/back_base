@@ -78,6 +78,15 @@ export async function CrearCuadreCaja(req, res) {
         let cuadre_total = ventaTotal + ingreso + respuesta5 - salida
         console.log("CuadreTotal", parseFloat((cuadre_total).toFixed(2)))
 
+        await sql.query(`INSERT INTO caja 
+        (fecha_cuadre, usuario, conteo, venta, cuadre_total, empresa, estado) VALUES 
+        ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventaTotal}', '${cuadre_total}', '${empresa}', 'ACTIVO')`)
+
+        // await Caja.create({fecha_cuadre, usuario, conteo:conteo, venta:ventas, cuadre_total:totalventa, empresa})
+        await sql.query(`UPDATE ventas SET estado = 'CUADRE' WHERE empresa = '${empresa}' AND estado = 'ACTIVO'`)
+        // const actualiza = await Reporte.update({estado:"CUADRE"},{where:{empresa, fecha_creacion:fecha_cuadre, estado:"ACTIVO"}});
+
+        await sql.query(`UPDATE movimiento SET estado = 'CUADRE' WHERE empresa = '${empresa}'`)
 
 
         res.json({
@@ -88,22 +97,7 @@ export async function CrearCuadreCaja(req, res) {
                 conteo: conteo,
             }
         })
-            await sql.query(`INSERT INTO caja 
-            (fecha_cuadre, usuario, conteo, venta, cuadre_total, empresa, estado) 
-            VALUES 
-            ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventaTotal}', '${parseFloat((cuadre_total).toFixed(2))}', '${empresa}', 'ACTIVO')`)
 
-            // await Caja.create({fecha_cuadre, usuario, conteo:conteo, venta:ventas, cuadre_total:totalventa, empresa})
-            await sql.query(`UPDATE ventas SET estado = 'CUADRE' WHERE empresa = '${empresa}' AND estado = 'ACTIVO'`)
-            // const actualiza = await Reporte.update({estado:"CUADRE"},{where:{empresa, fecha_creacion:fecha_cuadre, estado:"ACTIVO"}});
-
-            await sql.query(`UPDATE movimiento SET estado = 'CUADRE' WHERE empresa = '${empresa}'`)
-
-            // res.json({
-            //     success: true,
-            //     data: "Caja creada correctamente"
-            // });
-            // await Reporte.update({estado:"CUADRE"},{where:{empresa,fecha_creacion:fecha_cuadre}});
     } catch (error) {
         console.log("ListarReporte", error)
     }
@@ -249,7 +243,7 @@ export async function IngresarMovimiento(req, res) {
     try {
         const { detalle, usuario, empresa, ingreso, salida, fecha } = req.body
         let estado = "ACTIVO"
-        let fechaCreacion = moment().format('YYYY-MM-DD')
+        let fechaCreacion = moment().format('DD/MM/YYYY')
         let query = `INSERT INTO movimiento (detalle, usuario, empresa, ingreso, salida, fecha, estado, fechaCreacion) VALUES ('${detalle}', '${usuario}', '${empresa}', ${ingreso}, ${salida}, '${fecha}', '${estado}', '${fechaCreacion}')`
         const response = await sql.query(query)
         if(response[0].affectedRows > 0){
