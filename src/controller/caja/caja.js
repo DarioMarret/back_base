@@ -54,7 +54,7 @@ export async function ListarCajaActual(req, res) {
 
 export async function CrearCuadreCaja(req, res) {
     try {
-        const { empresa, fecha_cuadre, usuario, estado, conteo } = req.body
+        const { empresa, fecha_cuadre, usuario, estado, conteo, cantidaVouchers, totalVouchers } = req.body
         let fecha_ini = fecha_cuadre.split(" ")[0]
         console.log("fecha_ini", fecha_ini)
         console.log("fecha_cuadre", fecha_cuadre)
@@ -79,8 +79,8 @@ export async function CrearCuadreCaja(req, res) {
         console.log("CuadreTotal", parseFloat((cuadre_total).toFixed(2)))
 
         await sql.query(`INSERT INTO caja 
-        (fecha_cuadre, usuario, conteo, venta, cuadre_total, empresa, estado) VALUES 
-        ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventaTotal}', '${cuadre_total}', '${empresa}', 'ACTIVO')`)
+        (fecha_cuadre, usuario, conteo, venta, cuadre_total, empresa, estado, cantidaVouchers, totalVouchers) VALUES 
+        ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventaTotal}', '${cuadre_total}', '${empresa}', 'ACTIVO', '${cantidaVouchers}', '${respuesta2})`)
 
         // await Caja.create({fecha_cuadre, usuario, conteo:conteo, venta:ventas, cuadre_total:totalventa, empresa})
         await sql.query(`UPDATE ventas SET estado = 'CUADRE' WHERE empresa = '${empresa}' AND estado = 'ACTIVO'`)
@@ -95,6 +95,8 @@ export async function CrearCuadreCaja(req, res) {
                 total_venta: parseFloat((cuadre_total).toFixed(2)),
                 venta: ventaTotal,
                 conteo: conteo,
+                tarjeta: respuesta2,
+                transferencia: response3,
             }
         })
 
