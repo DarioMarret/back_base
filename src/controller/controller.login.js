@@ -7,10 +7,8 @@ export async function Login(req, res) {
     try {
         const { email, password } = req.body;
         const response = await ValivarExisteEmail(email)
-        console.log("ValivarExisteEmail",response)
-        if (!empty(response)) {
+        if (response) {
             const x = await bcrypt.compare(password, response.password)
-            console.log("compare password",x)
             if (x) {
                 const datos_empresa = await ExtraerDatosEmpresa(response.empresa)
                 let info = {
@@ -32,7 +30,7 @@ export async function Login(req, res) {
         } else {
             res.status(200).json({
                 success: false,
-                msg: "usuario incorrecta"
+                msg: "email incorrecta"
             })
         }
     } catch (error) {
@@ -82,7 +80,6 @@ export async function CrearUsuario(req, res){
 async function ValivarExisteEmail(email){
     try {
         const response = await sql.query(`SELECT * FROM usuarios_caja WHERE email = '${email}'`)
-        console.log("ValivarExisteEmail",response)
         if (!empty(response[0])) {
             return response[0][0]
         }else{
@@ -102,7 +99,7 @@ async function ExtraerDatosEmpresa(empresa){
             return false
         }
     } catch (error) {
-        console.log(error)
+        return false
     }
 }
 
