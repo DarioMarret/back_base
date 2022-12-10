@@ -10,7 +10,7 @@ import './database/conexion'
 import './function/CrearReporte'
 // import './src/model/index'
 
-import Login from './router/login/login'
+// import Login from './router/login/login'
 import Productos from './router/productos/productos'
 import Reporte from './router/reporte/reporte'
 import Caja from './router/caja/caja'
@@ -31,7 +31,7 @@ app.use(fileUpload())
 app.use("/resource", express.static(path.resolve(__dirname, './src/public')))
 
 
-app.use("/v1",Login)
+// app.use("/v1",Login)
 app.use("/v1",Productos)
 app.use("/v1",Reporte)
 app.use("/v1",Caja)
