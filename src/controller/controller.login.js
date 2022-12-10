@@ -82,13 +82,14 @@ export async function CrearUsuario(req, res){
 async function ValivarExisteEmail(email){
     try {
         const response = await sql.query(`SELECT * FROM usuarios_caja WHERE email = '${email}'`)
+        console.log("ValivarExisteEmail",response)
         if (!empty(response[0])) {
             return response[0][0]
         }else{
             return false
         }
     } catch (error) {
-        console.log(error)
+        return false
     }
 }
 
