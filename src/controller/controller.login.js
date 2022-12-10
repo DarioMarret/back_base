@@ -7,6 +7,7 @@ export async function Login(req, res) {
     try {
         const { email, password } = req.body;
         const response = await ValivarExisteEmail(email)
+        console.log("ValivarExisteEmail",response)
         if (!empty(response)) {
             const x = await bcrypt.compare(password, response.password)
             console.log("compare password",x)
