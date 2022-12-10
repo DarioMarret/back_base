@@ -1,6 +1,6 @@
 import empty from 'is-empty';
 import bcrypt from 'bcrypt'
-import Usuario from '../../model/Usuario/Usuario'
+// import Usuario from '../../model/Usuario/Usuario'
 
 export async function ValidarLogin(req, res) {
     try {

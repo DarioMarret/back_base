@@ -1,6 +1,6 @@
 import empty from "is-empty"
-import db from "../../database/conexion_sequelize"
-import sequelize from "sequelize"
+// import db from "../../database/conexion_sequelize"
+// import sequelize from "sequelize"
 // import Reporte from "../../model/Reporte/Reporte";
 import { sql } from "../../database/conexion";
 import moment from "moment";
@@ -132,21 +132,21 @@ export async function ActualizarEstado(req, res) {
 export async function SacarTotalesVentaFechas(req, res) {
     try {
         const { empresa, fecha_ini, fecha_fin, estado } = req.body;
-        let sql = `SELECT SUM(precio_venta * cantidad) AS tota_venta FROM esq_reporte.reporte WHERE empresa = '${empresa}' AND estado = '${estado}' AND fecha_creacion BETWEEN '${fecha_ini}' and '${fecha_fin}'`
-        db.query(sql,{type: sequelize.QueryTypes.SELECT}).then((response)=>{
-            console.log("SacarTotalesVentaFechas",response[0]);
-            if(!empty(response)){
-                res.json({
-                    success: true,
-                    data: response[0],
-                    msg:'SacarTotalesVentaFechas',
-                })
-            }else{
-                res.json({msg: "no se encontro reporte"})
-            }
-        }).catch((err)=>{
-            console.log("Error", err);
-        })
+        let query = `SELECT SUM(precio_venta * cantidad) AS tota_venta FROM ventas WHERE empresa = '${empresa}' AND estado = '${estado}' AND fecha_creacion BETWEEN '${fecha_ini}' and '${fecha_fin}'`
+        const response = await sql.query(query)
+        if(!empty(response[0])){
+            console.log("SacarTotalesVenta", response[0])
+            res.json({
+                success: true,
+                data: response[0]
+            })
+        }else{
+            res.json({
+                success: false,
+                data: response[0],
+                msg: "No se encontro datos"
+            })
+        }
     } catch (error) {
         console.log("ListarReporte", error)
     }

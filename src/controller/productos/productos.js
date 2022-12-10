@@ -1,12 +1,13 @@
 import empty from "is-empty"
 import XLSX from "xlsx"
-import Productos from "../../model/Productos/Productos"
+// import Productos from "../../model/Productos/Productos"
 import path from "path"
 import fs from "fs"
 // import db from "../../database/conexion_sequelize"
 // import sequelize from "sequelize"
 import { sql } from "../../database/conexion"
 import moment from "moment"
+import { Random } from "../../function/functionRandom"
 
 export async function ListarProducto(req, res) {
     try {
