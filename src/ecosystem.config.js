@@ -1,6 +1,6 @@
 module.exports = {
   apps: [{
-    name: "LUV_API",
+    name: "BACKEND_PUNTOVENTA",
     script: "./index.js",
     watch: true,
     max_memory_restart: '500M',

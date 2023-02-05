@@ -216,9 +216,11 @@ export async function ActualizaCaja(req, res){
         if(!empty(response[0])){
             // let cuadre_total = response[0][0].cuadre_total + cantidad
             let id = response[0][0].id
+            console.log("id", id)
             let query = `UPDATE caja SET cuadre_total = ${cantidad} WHERE id = ${id}`
-            const response = await sql.query(query)
-            if(!empty(response)){
+            const [row] = await sql.query(query)
+            console.log("row", row)
+            if(row.affectedRows > 0){
                 res.json({
                     success: true,
                     msg: "Se actualizo correctamente el estado"
@@ -236,7 +238,11 @@ export async function ActualizaCaja(req, res){
             })
         }
     } catch (error) {
-        console.log(error)
+        res.json({
+            success: false,
+            msg: "No se actualizo el estado",
+            error
+        })
     }
 }
 
@@ -267,7 +273,6 @@ export async function IngresarMovimiento(req, res) {
 export async function ListarMovimiento(req, res) {
     try {
         const { empresa, estado, fecha } = req.query;
-        console.log("empresa", empresa)
         let query = `SELECT * FROM movimiento WHERE empresa = '${empresa}' AND estado = '${estado}' AND fechaCreacion = '${fecha}' ORDER BY id DESC`
         const response = await sql.query(query)
         console.log("ListarMovimiento", response[0])
@@ -287,4 +292,69 @@ export async function ListarMovimiento(req, res) {
     } catch (error) {
         console.log("ListarReporte", error)
     } 
+}
+
+export async function ListarMovimientoAdmin(req, res) {
+    try {
+        const { empresa, fecha_ini, fecha_fin } = req.body;
+        console.log("ListarMovimientoAdmin", req.body)
+        let query = `SELECT * FROM movimiento 
+        WHERE empresa = '${empresa}' AND fechaCreacion BETWEEN '${fecha_ini}' AND '${fecha_fin}' 
+        ORDER BY id DESC`
+        const response = await sql.query(query)
+        if(response[0].length > 0){
+            res.json({
+                success: true,
+                data: response[0],
+                msg:'ListarMovimiento',
+            })
+        }else{
+            res.json({
+                success: false,
+                msg: "no se encontro movimiento"
+            })
+        }
+
+    } catch (error) {
+        console.log("ListarReporte", error)
+    } 
+}
+
+export async function ListarMovimientoAdminFechas() {
+    try {
+        let query = `SELECT * FROM caja`
+        const response = await sql.query(query)
+        if(response[0].length > 0){
+            for (let index = 0; index < response[0].length; index++) {
+                const items = response[0][index]
+                let query = `UPDATE caja SET fecha = '${items.fecha_cuadre.split(" ")[0]}' WHERE id = ${items.id}`
+                await sql.query(query)
+            }
+        }
+
+    } catch (error) {
+        console.log("ListarReporte", error)
+    }  
+}
+
+export async function ListarCuadresAdminFechas(req, res) {
+    try {
+        const { empresa, fecha_ini, fecha_fin } = req.body;
+        let query = `SELECT * FROM caja WHERE fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}' AND empresa = '${empresa}' ORDER BY id DESC`
+        const response = await sql.query(query)  
+        if(response[0].length > 0){
+            res.json({
+                success: true,
+                data: response[0],
+                msg:'ListarCuadresAdminFechas',
+            })
+        }else{
+            res.json({
+                success: false,
+                msg: "no se encontro movimiento"
+            })
+        }
+    } catch (error) {
+        console.log("ListarCuadresAdminFechas", error)
+    }  
 }

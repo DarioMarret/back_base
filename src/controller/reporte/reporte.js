@@ -30,7 +30,6 @@ export async function ListarReporteActual(req, res) {
     try {
         const { empresa, fecha } = req.query
         let estado = "CUADRE"
-        console.log("fecha", fecha)
         let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago FROM ventas  WHERE empresa = '${empresa}' AND fecha = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha, estado, forma_pago`;
         const respuesta = await sql.query(query)
         if (!empty(respuesta[0])) {
@@ -162,6 +161,31 @@ export async function SacarTotalesVenta(empresa, fecha_ini, fecha_fin, estado) {
             return response[0][0]
         }else{
             return 0
+        }
+    } catch (error) {
+        console.log("ListarReporte", error)
+    }
+}
+
+export async function ListarReporteAdmin(req, res) {
+    try {
+        const { empresa, fecha_ini, fecha_fin } = req.query
+        let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago, fecha, caja_usuario
+        FROM ventas  
+        WHERE empresa = '${empresa}' AND fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}' GROUP BY secuencia, fecha, empresa, estado, forma_pago, fecha, caja_usuario`;
+        const respuesta = await sql.query(query)
+        if (!empty(respuesta[0])) {
+            res.json({
+                success: true,
+                data: respuesta[0],
+                msg: "reporte actual"
+            })
+        }else{
+            res.json({
+                success: false,
+                data: respuesta[0],
+                msg: "no se encontro reporte"
+            })
         }
     } catch (error) {
         console.log("ListarReporte", error)

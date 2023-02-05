@@ -8,7 +8,7 @@ export const sql = mysql.createPool({
   user: process.env.USER_DB,
   password: process.env.PASSWORD_DB,
   database: process.env.DATABASE_DB,
-});
+})
 
 sql.getConnection(function(err, connection) {
   if (err) throw err; // not connected!
@@ -17,4 +17,4 @@ sql.getConnection(function(err, connection) {
     if (error) throw error;
     console.log('The solution is: ', results[0]);
   })
-});
+})

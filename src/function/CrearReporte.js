@@ -1,10 +1,3 @@
-import Productos from "../model/Productos/Productos"
-import moment from "moment"
-import { sql } from "../database/conexion"
-import Reporte from "../model/Reporte/Reporte"
-import Caja from "../model/Caja/Caja"
-import Movimiento from "../model/Caja/Movimiento"
-import isEmpty from "is-empty"
 import { CuadreIni, TotalMovimientos, TotalVentas, TotalVentasTarjeta, TotalVentasTransferencia } from "./cuadreCaja"
 
 // (async ()=>{

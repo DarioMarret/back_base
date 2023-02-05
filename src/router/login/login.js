@@ -4,7 +4,7 @@ import { CrearUsuario, ValidarLogin } from '../../controller/login/login'
 const routes = Router()
 
 routes.post('/validarlogin',ValidarLogin)
-routes.post('/crearUsuario',CrearUsuario)
+routes.post('/crear_admin',CrearUsuario)
 
 
 export default routes
