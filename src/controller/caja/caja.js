@@ -79,8 +79,8 @@ export async function CrearCuadreCaja(req, res) {
         console.log("CuadreTotal", parseFloat((cuadre_total).toFixed(2)))
 
         await sql.query(`INSERT INTO caja 
-        (fecha_cuadre, usuario, conteo, venta, cuadre_total, empresa, estado, cantidaVouchers, totalVouchers) VALUES 
-        ('${fecha_cuadre}', '${usuario}', '${conteo}', '${ventaTotal}', '${cuadre_total}', '${empresa}', 'ACTIVO', '${cantidaVouchers}', '${respuesta2}')`)
+        (fecha_cuadre, fecha, usuario, conteo, venta, cuadre_total, empresa, estado, cantidaVouchers, totalVouchers) VALUES 
+        ('${fecha_cuadre}', '${fecha_ini}', '${usuario}', '${conteo}', '${ventaTotal}', '${cuadre_total}', '${empresa}', 'ACTIVO', '${cantidaVouchers}', '${respuesta2}')`)
 
         // await Caja.create({fecha_cuadre, usuario, conteo:conteo, venta:ventas, cuadre_total:totalventa, empresa})
         await sql.query(`UPDATE ventas SET estado = 'CUADRE' WHERE empresa = '${empresa}' AND estado = 'ACTIVO'`)
@@ -328,7 +328,8 @@ export async function ListarMovimientoAdminFechas() {
             for (let index = 0; index < response[0].length; index++) {
                 const items = response[0][index]
                 let query = `UPDATE caja SET fecha = '${items.fecha_cuadre.split(" ")[0]}' WHERE id = ${items.id}`
-                await sql.query(query)
+                const [row] = await sql.query(query)
+                console.log("row", row.affectedRows)
             }
         }
 
@@ -351,7 +352,7 @@ export async function ListarCuadresAdminFechas(req, res) {
         }else{
             res.json({
                 success: false,
-                msg: "no se encontro movimiento"
+                msg: "no se encontro cuadres"
             })
         }
     } catch (error) {
