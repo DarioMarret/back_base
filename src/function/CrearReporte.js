@@ -113,13 +113,12 @@ import { CuadreIni, TotalMovimientos, TotalVentas, TotalVentasTarjeta, TotalVent
     try {
         let empresa = 'luielei'
         let estado = 'ACTIVO'
-        let fecha_ini = '06/12/2022'    
+        let fecha_ini = '05/02/2023'    
         const ventaTotal = await TotalVentas(empresa, estado, fecha_ini)
         console.log("TotalVentas",ventaTotal)
 
         const respuesta2 = await TotalVentasTarjeta(empresa, estado, fecha_ini)//Total de vetnas respuesta2
         console.log("TotalVentasTarjeta", respuesta2)
-
 
         const response3 = await TotalVentasTransferencia(empresa, estado, fecha_ini)//Total de vetnas respuesta3
         console.log("TotalVentasTransferencia", response3)

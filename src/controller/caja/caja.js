@@ -82,9 +82,7 @@ export async function CrearCuadreCaja(req, res) {
         (fecha_cuadre, fecha, usuario, conteo, venta, cuadre_total, empresa, estado, cantidaVouchers, totalVouchers) VALUES 
         ('${fecha_cuadre}', '${fecha_ini}', '${usuario}', '${conteo}', '${ventaTotal}', '${cuadre_total}', '${empresa}', 'ACTIVO', '${cantidaVouchers}', '${respuesta2}')`)
 
-        // await Caja.create({fecha_cuadre, usuario, conteo:conteo, venta:ventas, cuadre_total:totalventa, empresa})
         await sql.query(`UPDATE ventas SET estado = 'CUADRE' WHERE empresa = '${empresa}' AND estado = 'ACTIVO'`)
-        // const actualiza = await Reporte.update({estado:"CUADRE"},{where:{empresa, fecha_creacion:fecha_cuadre, estado:"ACTIVO"}});
 
         await sql.query(`UPDATE movimiento SET estado = 'CUADRE' WHERE empresa = '${empresa}'`)
 

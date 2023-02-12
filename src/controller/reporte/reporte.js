@@ -26,6 +26,31 @@ export async function ListarReporte(req, res) {
         console.log("ListarReporte", error)
     }
 }
+
+export const EmitidosSecuencia = async (req, res) => {
+    try {
+        const { empresa, secuencia } = req.body;
+        let query = `SELECT * FROM ventas WHERE secuencia = '${secuencia}' AND empresa = '${empresa}' `
+        const response = await sql.query(query)
+        if (!empty(response[0])) {
+            res.json({
+                success: true,
+                data: response[0],
+            })
+        }else{
+            res.json({
+                success: false,
+                data: response[0],
+            })
+        }  
+    } catch (error) {
+        res.json({
+            success: false,
+            data: error,
+        })
+    }
+}
+
 export async function ListarReporteActual(req, res) {
     try {
         const { empresa, fecha } = req.query
