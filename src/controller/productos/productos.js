@@ -126,7 +126,7 @@ export async function ListarProductoConsiDencia(req, res){
     try {
         const { empresa, busqueda } = req.body;
         // let coinsi = busqueda.toLowerCase()
-        let query = `SELECT id, producto, precio_venta, porcentaje_iva, estado FROM producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 12`;
+        let query = `SELECT id, producto, precio_venta, porcentaje_iva, porcentaje, estado FROM producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 12`;
         const response = await sql.query(query)
         // console.log(response[0])
         if (!empty(response[0])) {
