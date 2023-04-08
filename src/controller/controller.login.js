@@ -43,7 +43,7 @@ export async function Login(req, res) {
 
 export async function CrearUsuario(req, res){
     try {
-        const { email, nombreCompleto, password, empresa } = req.body;
+        const { email, nombreCompleto, password, empresa, whatsapp  } = req.body;
         const existe = await ValivarExisteEmail(email)
         if (existe){
             res.json({
@@ -54,7 +54,7 @@ export async function CrearUsuario(req, res){
             let hash_clave = await bcrypt.hash(password, 8);
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
             let empres = empresa.toLowerCase().replace(/ /g, '')
-            const response = await sql.query(`INSERT INTO usuarios_caja (email, nombreCompleto, password, empresa, fechaCreacion) VALUES ('${email}', '${nombreCompleto}', '${hash_clave}', '${empres}', '${fechaCreacion}')`)
+            const response = await sql.query(`INSERT INTO usuarios_caja (email, nombreCompleto, password, empresa, whatsapp, fechaCreacion) VALUES ('${email}', '${nombreCompleto}', '${hash_clave}', '${empres}', '${whatsapp}', '${fechaCreacion}')`)
             if(!empty(response)){
                 res.json({
                     success: true,
@@ -154,6 +154,30 @@ export const ActualizarUsuario = async (req, res) => {
     }
 }
 
+
+export const EliminarUsuario = async (req, res) => {
+    try {
+        const { id } = req.body;
+        const response = await sql.query(`DELETE FROM usuarios_caja WHERE id = ${id}`)
+        if(!empty(response)){
+            res.json({
+                success: true,
+                msg:'Usuario eliminado',
+            })
+        }else{
+            res.json({
+                success: false,
+                msg:'No se pudo eliminar el usuario',
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            msg: "algo salio mal vuelve a intentar",
+        })
+    }
+}
 
 async function ValivarExisteEmail(email){
     try {
