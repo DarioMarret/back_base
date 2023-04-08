@@ -83,7 +83,7 @@ export async function ListarUsuarios(req, res){
         for (let index = 0; index < empresa.length; index++) {
             const element = empresa[index];
             const response = await sql.query(`SELECT * FROM usuarios_caja WHERE empresa = '${element}'`)
-            user.push(response[0][0])
+            user.push(response[0])
         }
 
         if(!empty(user)){
