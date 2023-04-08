@@ -1,5 +1,5 @@
 import empty from 'is-empty';
-import { sql } from '../database/conexion'
+import { sql } from '../../database/conexion';
 
 export async function CrearEmpresa(req, res){
     try {
