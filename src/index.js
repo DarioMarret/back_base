@@ -12,7 +12,7 @@ import Login from './router/login/login'
 import Productos from './router/productos/productos'
 import Reporte from './router/reporte/reporte'
 import Caja from './router/caja/caja'
-import Empresa from './router/Empresa/empresa'
+// import Empresa from './router/Empresa/empresa'
 
 import Newlogin from './router/login/newLogin'
 import { ListarMovimientoAdminFechas } from './controller/caja/caja';
@@ -42,7 +42,7 @@ app.use("/v1",Login)
 app.use("/v1",Reporte)
 app.use("/v1",Newlogin)
 app.use("/v1",Productos)
-app.use("/v1",Empresa)
+// app.use("/v1",Empresa)
 
 
 app.listen(port, async() => {
