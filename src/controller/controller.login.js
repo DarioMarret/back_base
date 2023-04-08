@@ -76,6 +76,82 @@ export async function CrearUsuario(req, res){
     }
 }
 
+export async function ListarUsuarios(req, res){
+    const { empresa } = req.body
+    try {
+        var user = []
+        for (let index = 0; index < empresa.length; index++) {
+            const element = empresa[index];
+            const response = await sql.query(`SELECT * FROM usuarios_caja WHERE empresa = '${element}'`)
+            user.push(response[0][0])
+        }
+
+        if(!empty(user)){
+            res.json({
+                success: true,
+                data: user,
+            })
+        }else{
+            res.json({
+                success: false,
+                data: user,
+            })
+        }
+        
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            msg: "algo salio mal vuelve a intentar",
+        })
+    }
+}
+
+
+export const ActualizarUsuario = async (req, res) => {
+    try {
+        const { id, email, nombreCompleto, password, empresa } = req.body;
+        if(!empty(password)){
+            let hash_clave = await bcrypt.hash(password, 8);
+            let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
+            let empres = empresa.toLowerCase().replace(/ /g, '')
+            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', password = '${hash_clave}', empresa = '${empres}', fechaCreacion = '${fechaCreacion}' WHERE id = ${id}`)
+            if(!empty(response)){
+                res.json({
+                    success: true,
+                    msg:'Usuario actualizado en la empresa: '+ empresa,
+                })
+            }else{
+                res.json({
+                    success: false,
+                    msg:'No se pudo actualizar el usuario en la empresa: '+ empresa,
+                })
+            }
+        }else{
+            let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
+            let empres = empresa.toLowerCase().replace(/ /g, '')
+            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', empresa = '${empres}', fechaCreacion = '${fechaCreacion}' WHERE id = ${id}`)
+            if(!empty(response)){
+                res.json({
+                    success: true,
+                    msg:'Usuario actualizado en la empresa: '+ empresa,
+                })
+            }else{
+                res.json({
+                    success: false,
+                    msg:'No se pudo actualizar el usuario en la empresa: '+ empresa,
+                })
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            msg: "algo salio mal vuelve a intentar",
+        })
+    }
+}
+
 
 async function ValivarExisteEmail(email){
     try {
