@@ -78,6 +78,7 @@ export async function ActualizarEmpresa(req, res){
         const { ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad } = req.body;
         const response = await sql.query(`UPDATE empresa SET ruc = ?, razon_social = ?, ambiente = ?, iva_actual = ?, tarifa = ?, tipo_comprobante = ?, establecimiento = ?, punto_emision = ?, numero_secuencial = ?, tipo_emision = ?, clave_firma = ?, firma = ?, whatsapp = ?, correo = ?, logo_empresa = ?, fecha_emision = ?, fecha_vencimiento = ?, entidad_cert = ?, direccion = ?, matriz = ?, contabilidad = ? WHERE empresa = ?`,[ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad, empresa])
         if(!empty(response)){
+            await ActualizarProductoIvaTaifa(iva_actual, empresa)
             res.json({
                 success: true,
                 msg:'Empresa actualizada',
@@ -121,3 +122,18 @@ export async function EliminarEmpresa(req, res){
     }
 }
 
+
+
+async function ActualizarProductoIvaTaifa(iva_actual, empresa){
+    try {
+        const response = await sql.query(`UPDATE producto SET porcentaje_iva = ? WHERE empresa = ?`,[iva_actual, empresa])
+        if(!empty(response)){
+            return true
+        }else{
+            return false
+        }
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
