@@ -16,6 +16,7 @@ export async function Login(req, res) {
                     ...response,
                     perfil:"caja"
                 }
+                await FechaLogin(response.id)
                 res.json({
                     data: info,
                     success: true,
@@ -108,7 +109,6 @@ export async function ListarUsuarios(req, res){
         })
     }
 }
-
 
 export const ActualizarUsuario = async (req, res) => {
     try {
@@ -205,3 +205,30 @@ async function ExtraerDatosEmpresa(empresa){
     }
 }
 
+async function FechaLogin(id){
+    try {
+        let fecha = moment().format('YYYY-MM-DD HH:mm:ss');
+        const response = await sql.query(`UPDATE usuarios_caja SET fechaLogin = '${fecha}' WHERE id = ${id}`)
+        if (!empty(response)) {
+            return true
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+async function FechaDesLogin(id){
+    try {
+        let fecha = moment().format('YYYY-MM-DD HH:mm:ss');
+        const response = await sql.query(`UPDATE usuarios_caja SET fechaDesLogin = '${fecha}' WHERE id = ${id}`)
+        if (!empty(response)) {
+            return true
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}

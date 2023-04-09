@@ -8,6 +8,7 @@ routes.post('/crear_usuario',CrearUsuario)
 routes.post('/listar_usuarios',ListarUsuarios)
 routes.post('/actualizar',ActualizarUsuario)
 routes.delete('/eliminar_usuario',EliminarUsuario)
+// routes.post('/deslogin',ListarUsuariosEmpresa)
 
 
 export default routes

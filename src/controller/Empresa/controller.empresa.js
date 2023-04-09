@@ -123,10 +123,9 @@ export async function EliminarEmpresa(req, res){
 }
 
 
-
 async function ActualizarProductoIvaTaifa(iva_actual, empresa){
     try {
-        const response = await sql.query(`UPDATE producto SET porcentaje_iva = ? WHERE empresa = ?`,[iva_actual, empresa])
+        const response = await sql.query(`UPDATE producto SET porcentaje_iva = ? WHERE empresa = ?`,[parseFloat(iva_actual), empresa])
         if(!empty(response)){
             return true
         }else{
