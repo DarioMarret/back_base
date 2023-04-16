@@ -12,7 +12,7 @@ import { Random } from "../../function/functionRandom"
 export async function ListarProducto(req, res) {
     try {
         const { empresa } = req.query;
-        const response = await sql.query(`SELECT * FROM producto WHERE empresa = ${empresa}`)
+        const response = await sql.query(`SELECT * FROM producto WHERE empresa = '${empresa}'`)
         if (!empty(response[0])) {
             res.json({
                 success: true,
