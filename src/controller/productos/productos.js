@@ -32,6 +32,9 @@ export async function ListarProducto(req, res) {
 export async function CrearProductounitario(req, res) {
     try {
         const {producto, precio_venta, porcentaje_iva, empresa } = req.body
+        console.log("\n")
+        console.log("body", req.body)
+        console.log("\n")
         var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
         if (ress) {
             let auxiliar = Random(1, 999999999)
@@ -40,7 +43,10 @@ export async function CrearProductounitario(req, res) {
             (
                 '${auxiliar}',
                 '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', 
-                ${precio_venta}, ${porcentaje_iva}, '${empresa}', 'A', 
+                 ${precio_venta}, 
+                 ${porcentaje_iva}, 
+                '${empresa}', 
+                'A', 
                 '${moment().format('YYYY-MM-DD HH:mm:ss')}', 
                 '${moment().format('YYYY-MM-DD HH:mm:ss')}')`)
             res.json({
