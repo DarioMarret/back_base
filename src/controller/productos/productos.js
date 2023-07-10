@@ -38,13 +38,12 @@ export async function CrearProductounitario(req, res) {
         var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
         if (ress) {
             let auxiliar = Random(1, 999999999)
-            sql.query(`INSERT INTO producto
-            (auxiliar, producto, precio_venta, porcentaje_iva, empresa, estado, fechaCreacion, fechaUpdate) VALUES 
+            await sql.query(`INSERT INTO producto (auxiliar, producto, precio_venta, porcentaje_iva, empresa, estado, fechaCreacion, fechaUpdate) VALUES 
             (
                 '${auxiliar}',
                 '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', 
-                 ${precio_venta}, 
-                 ${porcentaje_iva}, 
+                ${precio_venta}, 
+                ${porcentaje_iva}, 
                 '${empresa}', 
                 'A', 
                 '${moment().format('YYYY-MM-DD HH:mm:ss')}', 
