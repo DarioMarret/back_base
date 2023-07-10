@@ -31,19 +31,20 @@ export async function ListarProducto(req, res) {
 
 export async function CrearProductounitario(req, res) {
     try {
-        const {producto, precio_venta, porcentaje_iva, empresa } = req.body
+        const {producto, precio_venta, porcentaje_iva, porcentaje, empresa } = req.body
         console.log("\n")
         console.log("body", req.body)
         console.log("\n")
         var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
         if (ress) {
             let auxiliar = Random(1, 999999999)
-            await sql.query(`INSERT INTO producto (auxiliar, producto, precio_venta, porcentaje_iva, empresa, estado, fechaCreacion, fechaUpdate) VALUES 
+            await sql.query(`INSERT INTO producto (auxiliar, producto, precio_venta, porcentaje_iva, porcentaje, empresa, estado, fechaCreacion, fechaUpdate) VALUES 
             (
                 '${auxiliar}',
                 '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', 
                 ${precio_venta}, 
                 ${porcentaje_iva}, 
+                ${porcentaje},
                 '${empresa}', 
                 'A', 
                 '${moment().format('YYYY-MM-DD HH:mm:ss')}', 
