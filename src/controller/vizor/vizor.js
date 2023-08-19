@@ -12,7 +12,7 @@ export const RegistrarOrden = async (req, res) => {
             ('${items.auxiliar}', '${items.producto}', ${parseFloat(items.precio_venta)}, ${parseFloat(items.porcentaje_iva)}, ${items.porcentaje}, '${items.empresa}', ${items.cantidad}, '${items.opt}', '${items.random}', '${usuario}', '${fecha}')`
             await sql.query(query)            
         }
-        res.json({ message: 'Orden registrada' })
+        res.json({ success: true, message: 'Orden registrada con exito' })
     } catch (error) {
         console.log(error)
     }
@@ -23,7 +23,10 @@ export const ListarOrdenes = async (req, res) => {
     try {
         let query = `SELECT * FROM orden WHERE empresa = '${empresa}'`
         const response = await sql.query(query)
-        res.json(response)
+        res.json({
+            success: true,
+            data: response
+        })
     } catch (error) {
         console.log(error)
     }    
@@ -34,7 +37,10 @@ export const EliminarProductoOrden = async (req, res) => {
     try {
         let query = `DELETE FROM orden WHERE id = ${id}`
         const response = await sql.query(query)
-        res.json(response)
+        res.json({
+            success: true,
+            data: response
+        })
     } catch (error) {
         console.log(error)
     }
@@ -45,7 +51,10 @@ export const EliminarOrden = async (req, res) => {
     try {
         let query = `DELETE FROM orden WHERE empresa = '${empresa}' AND random = '${random}'`
         const response = await sql.query(query)
-        res.json(response)
+        res.json({
+            success: true,
+            data: response
+        })
     } catch (error) {
         console.log(error)
     }
