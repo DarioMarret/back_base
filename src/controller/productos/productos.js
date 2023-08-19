@@ -31,17 +31,18 @@ export async function ListarProducto(req, res) {
 
 export async function CrearProductounitario(req, res) {
     try {
-        const {producto, precio_venta, porcentaje_iva, porcentaje, empresa } = req.body
+        const {producto, precio_venta, porcentaje_iva, porcentaje, empresa, id_categoria } = req.body
         console.log("\n")
         console.log("body", req.body)
         console.log("\n")
         var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
         if (ress) {
             let auxiliar = Random(1, 999999999)
-            await sql.query(`INSERT INTO producto (auxiliar, producto, precio_venta, porcentaje_iva, porcentaje, empresa, estado, fechaCreacion, fechaUpdate) VALUES 
+            await sql.query(`INSERT INTO producto (auxiliar, producto, id_categoria, precio_venta, porcentaje_iva, porcentaje, empresa, estado, fechaCreacion, fechaUpdate) VALUES 
             (
                 '${auxiliar}',
                 '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', 
+                ${id_categoria},
                 ${precio_venta}, 
                 ${porcentaje_iva}, 
                 ${porcentaje},
@@ -89,10 +90,11 @@ async function LeerExcel(ruta, res, empresa) {
         if (ress) {
             let auxiliar = Random(1, 999999999)
             sql.query(`INSERT INTO producto
-            (auxiliar, producto, precio_venta, porcentaje_iva, empresa, estado, fechaCreacion, fechaUpdate) VALUES
+            (auxiliar, producto, id_categoria, precio_venta, porcentaje_iva, empresa, estado, fechaCreacion, fechaUpdate) VALUES
             (
                 '${auxiliar}',
                 '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}',
+                ${dataExcel[index].id_categoria},
                 ${precio}, 
                 ${dataExcel[index].porcentaje_iva}, 
                 '${empresa}', 
@@ -132,7 +134,7 @@ export async function ListarProductoConsiDencia(req, res){
     try {
         const { empresa, busqueda } = req.body;
         // let coinsi = busqueda.toLowerCase()
-        let query = `SELECT id, producto, precio_venta, porcentaje_iva, porcentaje, estado FROM producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 12`;
+        let query = `SELECT id, producto, id_categoria, precio_venta, porcentaje_iva, porcentaje, estado FROM producto WHERE (producto LIKE '%${busqueda}%') AND empresa = '${empresa}' AND estado = 'A' LIMIT 12`;
         const response = await sql.query(query)
         // console.log(response[0])
         if (!empty(response[0])) {
@@ -169,5 +171,24 @@ export async function EliminarProductoPorId(req, res){
     } catch (error) {
         console.log("EliminarProductoPorId", error);
     }
+}
 
+export const ListarProductosPorCategoria = async (req, res) => {
+    try {
+        const { empresa, id_categoria } = req.body
+        const response = await sql.query(`SELECT * FROM producto WHERE empresa = '${empresa}' AND id_categoria = ${id_categoria}`)
+        if (response[0].length > 0) {
+            res.json({
+                success: true,
+                data: response[0]
+            })
+        } else {
+            res.json({
+                success: false,
+                data: []
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
 }
