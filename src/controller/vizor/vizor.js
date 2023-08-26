@@ -25,7 +25,7 @@ export const ListarOrdenes = async (req, res) => {
         const response = await sql.query(query)
         res.json({
             success: true,
-            data: response
+            data: response[0]
         })
     } catch (error) {
         console.log(error)
