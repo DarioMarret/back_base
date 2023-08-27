@@ -43,9 +43,9 @@ export const CrearCategoria = async (req, res) => {
 }
 
 export const EditarCategoria = async (req, res) => {
-    const { id, empresa, categoria } = req.body
+    const { id, empresa, categoria, descripcion } = req.body
     try {
-        const response = await sql.query(`UPDATE categoria SET categoria = '${categoria}' WHERE id_categoria = ${id} AND empresa = '${empresa}'`)
+        const response = await sql.query(`UPDATE categoria SET categoria = '${categoria}',  descripcion = '${descripcion}' WHERE id_categoria = ${id} AND empresa = '${empresa}'`)
         if (response[0].affectedRows > 0) {
             res.json({
                 success: true,
