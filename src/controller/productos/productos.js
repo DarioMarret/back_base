@@ -64,6 +64,7 @@ export async function CrearProductounitario(req, res) {
         console.log(error)
     }
 } 
+
 export async function CargarProductosDesdeExcel(req, res) {
     const { empresa } = req.body
     let ruta_archivo = path.join(__dirname, '../../archivos_temporal/')
