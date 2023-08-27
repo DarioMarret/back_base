@@ -26,6 +26,10 @@ export async function ListarProducto(req, res) {
         }
     } catch (error) {
         console.log("ListarProducto", error)
+        res.json({
+            success: false,
+            data: error
+        })
     }
 }
 
@@ -62,6 +66,10 @@ export async function CrearProductounitario(req, res) {
         }
     } catch (error) {
         console.log(error)
+        res.json({
+            success: false,
+            data: error
+        })
     }
 } 
 
@@ -71,22 +79,17 @@ export async function EditarProducto(req, res) {
         console.log("\n")
         console.log("body", req.body)
         console.log("\n")
-        var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
-        if (ress) {
-            let auxiliar = Random(1, 999999999)
-            await sql.query(`UPDATE producto SET producto = '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', id_categoria = ${id_categoria}, precio_venta = ${precio_venta}, porcentaje_iva = ${porcentaje_iva}, porcentaje = ${porcentaje}, fechaUpdate = '${moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE id = ${id} AND empresa = '${empresa}'`)
-            res.json({
-                success: true,
-                msg: "Producto actualizado"
-            })
-        }else{
-            res.json({
-                success: false, 
-                msg: "producto ya exite es su lista"
-            })
-        }
+        await sql.query(`UPDATE producto SET producto = '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', id_categoria = ${id_categoria}, precio_venta = ${precio_venta}, porcentaje_iva = ${porcentaje_iva}, porcentaje = ${porcentaje}, fechaUpdate = '${moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE id = ${id} AND empresa = '${empresa}'`)
+        res.json({
+            success: true,
+            msg: "Producto actualizado"
+        })
     } catch (error) {
         console.log(error)
+        res.json({
+            success: false,
+            msg: "No se pudo actualizar el producto"
+        })
     }
 }
 
@@ -176,6 +179,10 @@ export async function ListarProductoConsiDencia(req, res){
         }
     } catch (error) {
         console.log(error)
+        res.json({
+            success: false,
+            data: error
+        })
     }
 }
 
@@ -196,6 +203,10 @@ export async function EliminarProductoPorId(req, res){
         }
     } catch (error) {
         console.log("EliminarProductoPorId", error);
+        res.json({
+            success: false,
+            data: error
+        })
     }
 }
 
@@ -216,5 +227,9 @@ export const ListarProductosPorCategoria = async (req, res) => {
         }
     } catch (error) {
         console.log(error)
+        res.json({
+            success: false,
+            data: error
+        })
     }
 }
