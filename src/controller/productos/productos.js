@@ -65,6 +65,31 @@ export async function CrearProductounitario(req, res) {
     }
 } 
 
+export async function EditarProducto(req, res) {
+    try {
+        const { id, producto, precio_venta, porcentaje_iva, porcentaje, empresa, id_categoria } = req.body
+        console.log("\n")
+        console.log("body", req.body)
+        console.log("\n")
+        var ress = await VerificarProductoExistente(empresa, producto.toLowerCase())
+        if (ress) {
+            let auxiliar = Random(1, 999999999)
+            await sql.query(`UPDATE producto SET producto = '${producto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,"")}', id_categoria = ${id_categoria}, precio_venta = ${precio_venta}, porcentaje_iva = ${porcentaje_iva}, porcentaje = ${porcentaje}, fechaUpdate = '${moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE id = ${id} AND empresa = '${empresa}'`)
+            res.json({
+                success: true,
+                msg: "Producto actualizado"
+            })
+        }else{
+            res.json({
+                success: false, 
+                msg: "producto ya exite es su lista"
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export async function CargarProductosDesdeExcel(req, res) {
     const { empresa } = req.body
     let ruta_archivo = path.join(__dirname, '../../archivos_temporal/')
