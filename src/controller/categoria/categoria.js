@@ -23,9 +23,9 @@ export const ListarCategorias = async (req, res) => {
 }
 
 export const CrearCategoria = async (req, res) => {
-    const { empresa, categoria } = req.body
+    const { empresa, categoria, descripcion } = req.body
     try {
-        const response = await sql.query(`INSERT INTO categoria (empresa, categoria) VALUES ('${empresa}', '${categoria}')`)
+        const response = await sql.query(`INSERT INTO categoria (empresa, categoria, descripcion) VALUES ('${empresa}', '${categoria}' , '${descripcion}')`)
         if (response[0].affectedRows > 0) {
             res.json({
                 success: true,
