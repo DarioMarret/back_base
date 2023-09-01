@@ -33,6 +33,33 @@ export async function ListarProducto(req, res) {
     }
 }
 
+// listar productos por empresa con su categoria
+export async function ListarProductoPorEmpresaCategoria(req, res) {
+    try {
+        const { empresa } = req.query;
+        const response = await sql.query(`SELECT p.id, p.producto, p.id_categoria, p.precio_venta, p.porcentaje_iva, p.porcentaje, p.estado, c.categoria FROM producto p INNER JOIN categoria c ON p.id_categoria = c.id_categoria WHERE p.empresa = '${empresa}'`)
+        if (!empty(response[0])) {
+            res.json({
+                success: true,
+                data: response[0],
+            })
+        } else {
+            res.json({
+                success: false,
+                data: response[0],
+            })
+        }
+    } catch (error) {
+        console.log("ListarProductoPorEmpresaCategoria", error)
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}
+        
+
+
 export async function CrearProductounitario(req, res) {
     try {
         const {producto, precio_venta, porcentaje_iva, porcentaje, empresa, id_categoria } = req.body
