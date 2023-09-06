@@ -3,9 +3,9 @@ import { sql } from '../../database/conexion';
 
 export async function CrearEmpresa(req, res){
     try {
-        const { ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad } = req.body;
-        const response = await sql.query(`INSERT INTO empresa (ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad) VALUES 
-        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,[ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad])
+        const { ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad, factura } = req.body;
+        const response = await sql.query(`INSERT INTO empresa (ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad, factura) VALUES 
+        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,[ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad, factura])
         if(!empty(response)){
             res.json({
                 success: true,
@@ -75,8 +75,8 @@ export async function ListarEmpresa(req, res){
 
 export async function ActualizarEmpresa(req, res){
     try {
-        const { ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad } = req.body;
-        const response = await sql.query(`UPDATE empresa SET ruc = ?, razon_social = ?, ambiente = ?, iva_actual = ?, tarifa = ?, tipo_comprobante = ?, establecimiento = ?, punto_emision = ?, numero_secuencial = ?, tipo_emision = ?, clave_firma = ?, firma = ?, whatsapp = ?, correo = ?, logo_empresa = ?, fecha_emision = ?, fecha_vencimiento = ?, entidad_cert = ?, direccion = ?, matriz = ?, contabilidad = ? WHERE empresa = ?`,[ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad, empresa])
+        const { ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, empresa, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad, factura } = req.body;
+        const response = await sql.query(`UPDATE empresa SET ruc = ?, razon_social = ?, ambiente = ?, iva_actual = ?, tarifa = ?, tipo_comprobante = ?, establecimiento = ?, punto_emision = ?, numero_secuencial = ?, tipo_emision = ?, clave_firma = ?, firma = ?, whatsapp = ?, correo = ?, logo_empresa = ?, fecha_emision = ?, fecha_vencimiento = ?, entidad_cert = ?, direccion = ?, matriz = ?, contabilidad = ?, factura = ? WHERE empresa = ?`,[ruc, razon_social, ambiente, iva_actual, tarifa, tipo_comprobante, establecimiento, punto_emision, numero_secuencial, tipo_emision, clave_firma, firma, whatsapp, correo, logo_empresa, fecha_emision, fecha_vencimiento, entidad_cert, direccion, matriz, contabilidad, factura, empresa])
         if(!empty(response)){
             await ActualizarProductoIvaTaifa(iva_actual, empresa)
             res.json({
