@@ -104,9 +104,18 @@ export const ListarMesas = async (req, res) => {
 }
 
 export const RegistrarMesa = async (req, res) => {
-    const { empresa, mesa } = req.body
+    const { empresa, numero_mesa } = req.body
     try {
-        let query = `INSERT INTO mesas (empresa, mesa) VALUES ('${empresa}', '${mesa}')`
+        // no se permite registrar una mesa con el mismo numero
+        let me = `SELECT * FROM mesas WHERE empresa = '${empresa}' AND numero_mesa = '${numero_mesa}'`
+        const result = await sql.query(me)
+        if (result[0].length > 0 && result[0][0].numero_mesa == numero_mesa) {
+            return res.json({
+                success: false,
+                data: 'Ya existe una mesa con el mismo numero'
+            })
+        }
+        let query = `INSERT INTO mesas (empresa, numero_mesa) VALUES ('${empresa}', '${numero_mesa}')`
         const response = await sql.query(query)
         res.json({
             success: true,
