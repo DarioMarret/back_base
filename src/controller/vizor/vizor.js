@@ -160,7 +160,7 @@ export const CambiarEstadoMesa = async (req, res) => {
             })
         }
         let fecha = moment().format('YYYY-MM-DD HH:mm:ss')
-        let query = `UPDATE mesas SET estado = '${estado}', mesero = '${mesero}', fecha = '${fecha}' WHERE id = '${id}'`
+        let query = `UPDATE mesas SET estado = '${estado}', mesero = '${mesero}', fecha = '${fecha}', ceder = 'NO' WHERE id = '${id}'`
         const response = await sql.query(query)
         return res.json({
             success: true,
