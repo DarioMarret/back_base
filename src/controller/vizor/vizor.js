@@ -148,12 +148,21 @@ export const EliminarMesa = async (req, res) => {
 }
 
 export const CambiarEstadoMesa = async (req, res) => {
-    const { id, estado, mesero } = req.body
+    const { id, estado, mesero, ceder } = req.body
     try {
+        if (ceder == true) {
+            // si ceder se actualiza el mesero y ceder = "SI"
+            let query = `UPDATE mesas SET estado = '${estado}', mesero = '${mesero}', ceder = 'SI' WHERE id = '${id}'`
+            const response = await sql.query(query)
+            return res.json({
+                success: true,
+                data: response
+            })
+        }
         let fecha = moment().format('YYYY-MM-DD HH:mm:ss')
         let query = `UPDATE mesas SET estado = '${estado}', mesero = '${mesero}', fecha = '${fecha}' WHERE id = '${id}'`
         const response = await sql.query(query)
-        res.json({
+        return res.json({
             success: true,
             data: response
         })
