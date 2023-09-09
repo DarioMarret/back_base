@@ -8,9 +8,10 @@ export const RegistrarOrden = async (req, res) => {
     console.log("orden: ",orden)
     console.log("mesero: ",usuario)
     console.log("mesa: ",mesa)
+    console.log("empresa: ",empresa)
     try {
         // listar cual es la ultima orden de la empresa
-        let query = `SELECT * FROM orden WHERE empresa = '${orden[0].empresa}' ORDER BY id DESC LIMIT 1`
+        let query = `SELECT * FROM orden WHERE empresa = '${empresa}' ORDER BY id DESC LIMIT 1`
         const response = await sql.query(query)
         var numero_ordenes = 1
         if (response[0].length > 0) {
