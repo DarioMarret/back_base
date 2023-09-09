@@ -14,7 +14,7 @@ export async function ListarProducto(req, res) {
         const { empresa } = req.query;
         // const response = await sql.query(`SELECT * FROM producto WHERE empresa = '${empresa}'`)
         // consultar todos los productos con su categoria y si su no existe categoria  que muestre id_categoria = null
-        const response = await sql.query(`SELECT p.id, p.producto, p.id_categoria, p.precio_venta, p.porcentaje_iva, p.porcentaje, p.estado, c.categoria FROM producto p LEFT JOIN categoria c ON p.id_categoria = c.id_categoria WHERE p.empresa = '${empresa}'`)
+        const response = await sql.query(`SELECT p.id, p.auxiliar, p.producto, p.id_categoria, p.precio_venta, p.porcentaje_iva, p.porcentaje, p.estado, c.categoria FROM producto p LEFT JOIN categoria c ON p.id_categoria = c.id_categoria WHERE p.empresa = '${empresa}'`)
         if (!empty(response[0])) {
             res.json({
                 success: true,
