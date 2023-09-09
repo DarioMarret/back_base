@@ -3,7 +3,7 @@ import { sql } from "../../database/conexion";
 
 
 export const RegistrarOrden = async (req, res) => {
-    const { orden, usuario, mesa } = req.body
+    const { orden, usuario, mesa, empresa } = req.body
     let fecha = moment().format('YYYY-MM-DD HH:mm:ss')
     console.log("orden: ",orden)
     console.log("mesero: ",usuario)
@@ -20,7 +20,7 @@ export const RegistrarOrden = async (req, res) => {
         for (let index = 0; index < orden.length; index++) {
             const items = orden[index];
             let query = `INSERT INTO orden (auxiliar, producto, precio_venta, porcentaje_iva, porcentaje, empresa, cantidad, opt, random, orden, usuario, fecha, mesa) VALUES 
-            ('${items.auxiliar}', '${items.producto}', ${parseFloat(items.precio_venta)}, ${parseFloat(items.porcentaje_iva)}, ${items.porcentaje}, '${items.empresa}', ${items.cantidad}, '${items.opt}', '${items.random}', ${numero_ordenes}, '${usuario}', '${fecha}', '${mesa}')`
+            ('${items.auxiliar}', '${items.producto}', ${parseFloat(items.precio_venta)}, ${parseFloat(items.porcentaje_iva)}, ${items.porcentaje}, '${empresa}', ${items.cantidad}, '${items.opt}', '${items.random}', ${numero_ordenes}, '${usuario}', '${fecha}', '${mesa}')`
             await sql.query(query)
         }
 
