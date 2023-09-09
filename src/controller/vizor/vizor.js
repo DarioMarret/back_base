@@ -5,6 +5,9 @@ import { sql } from "../../database/conexion";
 export const RegistrarOrden = async (req, res) => {
     const { orden, usuario, mesa } = req.body
     let fecha = moment().format('YYYY-MM-DD HH:mm:ss')
+    console.log("orden: ",orden)
+    console.log("mesero: ",usuario)
+    console.log("mesa: ",mesa)
     try {
         // listar cual es la ultima orden de la empresa
         let query = `SELECT * FROM orden WHERE empresa = '${orden[0].empresa}' ORDER BY id DESC LIMIT 1`
