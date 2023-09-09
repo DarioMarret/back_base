@@ -39,7 +39,7 @@ export async function ListarProducto(req, res) {
 export async function ListarProductoPorEmpresaCategoria(req, res) {
     try {
         const { empresa } = req.query;
-        const response = await sql.query(`SELECT p.id, p.producto, p.id_categoria, p.precio_venta, p.porcentaje_iva, p.porcentaje, p.estado, c.categoria FROM producto p INNER JOIN categoria c ON p.id_categoria = c.id_categoria WHERE p.empresa = '${empresa}'`)
+        const response = await sql.query(`SELECT p.id, p.auxiliar, p.producto, p.id_categoria, p.precio_venta, p.porcentaje_iva, p.porcentaje, p.estado, c.categoria FROM producto p INNER JOIN categoria c ON p.id_categoria = c.id_categoria WHERE p.empresa = '${empresa}'`)
         if (!empty(response[0])) {
             res.json({
                 success: true,
