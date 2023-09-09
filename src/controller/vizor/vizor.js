@@ -18,6 +18,26 @@ export const RegistrarOrden = async (req, res) => {
             numero_ordenes = response[0][0].orden + 1
         }
 
+        // verificar  si ya existe una orden con el mismo numero de mesa y random para eliminar todo y crear nuevamente con el mismo random y numero de orden
+        let me = `SELECT * FROM orden WHERE empresa = '${empresa}' AND mesa = '${mesa}' AND random = '${orden[0].random}'`
+        const exitencia = await sql.query(me)
+        if (exitencia[0].length > 0) {
+            // eliminar todo
+            let mismo_numero_orden = exitencia[0][0].orden
+            let query = `DELETE FROM orden WHERE empresa = '${empresa}' AND mesa = '${mesa}' AND random = '${orden[0].random}'`
+            await sql.query(query)
+            for (let index = 0; index < orden.length; index++) {
+                const items = orden[index];
+                let query = `INSERT INTO orden (auxiliar, producto, precio_venta, porcentaje_iva, porcentaje, empresa, cantidad, opt, random, orden, usuario, fecha, mesa) VALUES 
+                ('${items.auxiliar}', '${items.producto}', ${parseFloat(items.precio_venta)}, ${parseFloat(items.porcentaje_iva)}, ${items.porcentaje}, '${empresa}', ${items.cantidad}, '${items.opt}', '${items.random}', ${mismo_numero_orden}, '${usuario}', '${fecha}', '${mesa}')`
+                await sql.query(query)
+            }
+            return res.json({ success: true, message: 'Orden registrada con exito', orden: mismo_numero_orden, mesa: mesa })
+        }
+
+
+
+
         for (let index = 0; index < orden.length; index++) {
             const items = orden[index];
             let query = `INSERT INTO orden (auxiliar, producto, precio_venta, porcentaje_iva, porcentaje, empresa, cantidad, opt, random, orden, usuario, fecha, mesa) VALUES 
@@ -25,7 +45,7 @@ export const RegistrarOrden = async (req, res) => {
             await sql.query(query)
         }
 
-        res.json({ success: true, message: 'Orden registrada con exito', orden: numero_ordenes, mesa: mesa })
+        return res.json({ success: true, message: 'Orden registrada con exito', orden: numero_ordenes, mesa: mesa })
     } catch (error) {
         console.log(error)
         res.json({
