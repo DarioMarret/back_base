@@ -73,6 +73,42 @@ export const ListarOrdenes = async (req, res) => {
     }    
 }
 
+export const ListarOrdenesPorEmpresaMesa = async (req, res) => {
+    const { empresa, mesa } = req.body
+    try {
+        let query = `SELECT * FROM orden WHERE empresa = '${empresa}' AND mesa = '${mesa}'`
+        const response = await sql.query(query)
+        res.json({
+            success: true,
+            data: response[0]
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}
+
+export const EliminarItemsOrden = async (req, res) => {
+    const { id } = req.params
+    try {
+        let query = `DELETE FROM orden WHERE id = ${id}`
+        const response = await sql.query(query)
+        res.json({
+            success: true,
+            data: response
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}
+
 export const EliminarProductoOrden = async (req, res) => {
     const { id } = req.params
     try {
