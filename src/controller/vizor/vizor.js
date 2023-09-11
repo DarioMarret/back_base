@@ -35,9 +35,6 @@ export const RegistrarOrden = async (req, res) => {
             return res.json({ success: true, message: 'Orden registrada con exito', orden: mismo_numero_orden, mesa: mesa })
         }
 
-
-
-
         for (let index = 0; index < orden.length; index++) {
             const items = orden[index];
             let query = `INSERT INTO orden (auxiliar, producto, precio_venta, porcentaje_iva, porcentaje, empresa, cantidad, opt, random, orden, usuario, fecha, mesa) VALUES 
@@ -216,6 +213,23 @@ export const EliminarMesa = async (req, res) => {
         res.json({
             success: true,
             data: "Mesa eliminada con exito"
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}
+
+export const ActualizarCantidadOpt = async (req, res) => {
+    const { id, cantidad, opt } = req.body
+    try {
+        let query = `UPDATE orden SET cantidad = ${cantidad}, opt = '${opt}' WHERE id = ${id}`
+        const response = await sql.query(query)
+        res.json({
+            success: true,
+            data: response
         })
     } catch (error) {
         res.json({
