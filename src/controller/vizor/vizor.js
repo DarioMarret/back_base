@@ -92,11 +92,20 @@ export const ListarOrdenesPorEmpresaMesa = async (req, res) => {
 }
 
 export const EliminarItemsOrden = async (req, res) => {
-    const { id } = req.params
+    const { id, cantidad } = req.params
     try {
+        // si la cantidad es mayor a 0 se resta la cantidad del item
+        if (cantidad > 0) {
+            let query = `UPDATE orden SET cantidad = cantidad - ${cantidad} WHERE id = ${id}`
+            const response = await sql.query(query)
+            return res.json({
+                success: true,
+                data: response
+            })
+        }
         let query = `DELETE FROM orden WHERE id = ${id}`
         const response = await sql.query(query)
-        res.json({
+        return res.json({
             success: true,
             data: response
         })

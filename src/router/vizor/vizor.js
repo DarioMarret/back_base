@@ -11,7 +11,7 @@ routes.delete('/eliminar_item/:empresa/:random',EliminarOrden)
 routes.post('/mesas', ListarMesas)
 routes.post('/registra_mesas', RegistrarMesa)
 routes.delete('/elimina_mesa/:id/:empresa', EliminarMesa)
-routes.delete('/elimina_orden/:id', EliminarItemsOrden)
+routes.delete('/elimina_orden/:id/:cantidad', EliminarItemsOrden)
 routes.post('/atender_mesa', CambiarEstadoMesa)
 routes.post('/listar_orden_empresa_mesa',ListarOrdenesPorEmpresaMesa)
 
