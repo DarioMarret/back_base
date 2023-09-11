@@ -228,6 +228,7 @@ export const ActualizarCantidadOpt = async (req, res) => {
         console.log("body: ",req.body)
         let query = `UPDATE orden SET cantidad = ${cantidad}, opt = '${opt}' WHERE id = ${id}`
         const response = await sql.query(query)
+        console.log("response: ",response)
         res.json({
             success: true,
             data: response
