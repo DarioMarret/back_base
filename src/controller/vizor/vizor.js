@@ -225,6 +225,7 @@ export const EliminarMesa = async (req, res) => {
 export const ActualizarCantidadOpt = async (req, res) => {
     const { id, cantidad, opt } = req.body
     try {
+        console.log("body: ",req.body)
         let query = `UPDATE orden SET cantidad = ${cantidad}, opt = '${opt}' WHERE id = ${id}`
         const response = await sql.query(query)
         res.json({
