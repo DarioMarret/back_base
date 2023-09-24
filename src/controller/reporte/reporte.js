@@ -1,9 +1,10 @@
-import empty from "is-empty"
+import empty from "is-empty";
 // import db from "../../database/conexion_sequelize"
 // import sequelize from "sequelize"
 // import Reporte from "../../model/Reporte/Reporte";
-import { sql } from "../../database/conexion";
+import isEmpty from "is-empty";
 import moment from "moment";
+import { sql } from "../../database/conexion";
 
 export async function ListarReporte(req, res) {
     try {
@@ -76,7 +77,7 @@ export async function ListarReporteActual(req, res) {
 }
 
 export async function CrearVenta(req, res) {
-    const { empresa, tienda, secuencial, caja_usuario, forma_pago } = req.body;
+    const { empresa, tienda, secuencial, caja_usuario, forma_pago, crear_venta, contador } = req.body;
     var count = 0;
     let fecha = moment().format("DD/MM/YYYY");
     for (var index = 0; index < tienda.length; index++) {
@@ -86,6 +87,11 @@ export async function CrearVenta(req, res) {
         ('${secuencial}', '${producto}', ${precio_venta}, ${cantidad}, '${moment().format('DD/MM/YYYY HH:mm:ss')}','${empresa}', 'ACTIVO',  '${forma_pago}', '${caja_usuario}', '${fecha}')`)
         count = count + 1;
     }
+
+    if(!isEmpty(contador)){
+        await InfoEmpresanumeroSecuencialActualiza(empresa)
+    }
+
     if(index === tienda.length){
         res.json({
             success:true,
@@ -94,6 +100,28 @@ export async function CrearVenta(req, res) {
         })
     }else{
         console.log("error")
+    }
+}
+
+const InfoEmpresanumeroSecuencialActualiza = async (empresa) => {
+    try {
+        const consulta = await sql.query(`SELECT * FROM empresa WHERE empresa = ?`, [empresa])
+        if(consulta[0].length > 0){
+            let numero_secuencial = parseInt(consulta[0][0].numero_secuencial) + 1
+            let new_numero_secuencial = numero_secuencial.toString().padStart(9, "0")
+            await sql.query(`UPDATE empresa SET numero_secuencial = ? WHERE empresa = ?`, [new_numero_secuencial, empresa]);
+            return {
+                success: true,
+                numero_secuencial
+            }
+        }else{
+            return {
+                success: false,
+                message: "La empresa no existe"
+            }
+        }
+    } catch (error) {
+        return 0
     }
 }
 
