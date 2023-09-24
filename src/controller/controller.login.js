@@ -133,7 +133,7 @@ export const ActualizarUsuario = async (req, res) => {
         }else{
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
             let empres = empresa.toLowerCase().replace(/ /g, '')
-            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', empresa = '${empres}', fechaCreacion = '${fechaCreacion}' WHERE id = ${id}`)
+            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', empresa = '${empres}', whatsapp = '${whatsapp}', fechaCreacion = '${fechaCreacion}' WHERE id = ${id}`)
             if(!empty(response)){
                 res.json({
                     success: true,
