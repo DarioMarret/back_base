@@ -1,7 +1,7 @@
+import bcrypt from 'bcrypt';
 import empty from 'is-empty';
-import { sql } from '../database/conexion'
-import bcrypt from 'bcrypt'
-import moment from 'moment'
+import moment from 'moment';
+import { sql } from '../database/conexion';
 
 export async function Login(req, res) {
     try {
@@ -112,12 +112,13 @@ export async function ListarUsuarios(req, res){
 
 export const ActualizarUsuario = async (req, res) => {
     try {
-        const { id, email, nombreCompleto, password, empresa } = req.body;
+        const { id, email, nombreCompleto, password, empresa, whatsapp } = req.body;
+        console.log(req.body)
         if(!empty(password)){
             let hash_clave = await bcrypt.hash(password, 8);
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
             let empres = empresa.toLowerCase().replace(/ /g, '')
-            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', password = '${hash_clave}', empresa = '${empres}', fechaCreacion = '${fechaCreacion}' WHERE id = ${id}`)
+            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', password = '${hash_clave}', empresa = '${empres}', whatsapp = '${whatsapp}', fechaCreacion = '${fechaCreacion}' WHERE id = ${id}`)
             if(!empty(response)){
                 res.json({
                     success: true,
