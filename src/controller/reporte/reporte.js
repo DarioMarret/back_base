@@ -77,7 +77,7 @@ export async function ListarReporteActual(req, res) {
 }
 
 export async function CrearVenta(req, res) {
-    const { empresa, tienda, secuencial, caja_usuario, forma_pago, crear_venta, contador } = req.body;
+    const { empresa, tienda, secuencial, caja_usuario, forma_pago, contador } = req.body;
     var count = 0;
     let fecha = moment().format("DD/MM/YYYY");
     for (var index = 0; index < tienda.length; index++) {

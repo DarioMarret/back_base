@@ -26,6 +26,11 @@ export async function CrearEmpresa(req, res){
     }
 }
 
+// export const RegistrarEmpresaInicial = async (req, res) => {
+    
+// }
+
+
 export async function ListarEmpresas(req, res){
     try {
         const response = await sql.query(`SELECT * FROM empresa`)

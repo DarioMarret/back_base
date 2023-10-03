@@ -1,5 +1,6 @@
 import { Router } from 'express'
-import { CargarProductosDesdeExcel, EliminarProductoPorId, ListarProducto, ListarProductoConsiDencia, CrearProductounitario, ListarProductosPorCategoria, EditarProducto } from '../../controller/productos/productos'
+import { ActualizarMateria, EliminarMateriaPorId, ListarMaterias, ListarMateriasPorId, RegistrarMateria } from '../../controller/productos/controller.materia'
+import { CargarProductosDesdeExcel, CrearProductounitario, EditarProducto, EliminarProductoPorId, ListarProducto, ListarProductoConsiDencia, ListarProductosPorCategoria } from '../../controller/productos/productos'
 
 const routes = Router()
 
@@ -11,5 +12,13 @@ routes.post('/listar_produtos_categorias',ListarProductosPorCategoria)
 
 routes.post('/busqueda_coinsidencia',ListarProductoConsiDencia)
 routes.delete('/eliminar_producto_id',EliminarProductoPorId)
+
+
+// materia prima
+routes.post('/crear_materia_prima',RegistrarMateria)
+routes.put('/actualizar_materia_prima',ActualizarMateria)
+routes.get('/listar_materia_prima',ListarMaterias)
+routes.get('/listar_materia_prima_id',ListarMateriasPorId)
+routes.delete('/eliminar_materia_prima_id',EliminarMateriaPorId)
 
 export default routes

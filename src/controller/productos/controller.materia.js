@@ -3,7 +3,7 @@ import { sql } from "../../database/conexion"
 
 
 export const RegistrarMateria = async (req, res) => {
-    const { empresa, materi_prima, peso_inicial, peso_actual, peso_concurrente } = req.body
+    const { empresa, materi_prima, peso_inicial, peso_actual, peso_concurrente, medida_entrada, medida_salida, cantidad_alerta } = req.body
     try {
         if( !empresa || !materi_prima || !peso_inicial || !peso_actual || !peso_concurrente ){
             return res.json({
@@ -11,7 +11,9 @@ export const RegistrarMateria = async (req, res) => {
                 msg: "Todos los campos son obligatorios"
             })
         }
-        const response = await sql.query(`INSERT INTO materias_primas (empresa, materi_prima, peso_inicial, peso_actual, peso_concurrente, fecha_registro) VALUES ('${empresa}', '${materi_prima}', ${peso_inicial}, ${peso_actual}, ${peso_concurrente}, '${moment().format('YYYY-MM-DD HH:mm:ss')}')`)
+        const response = await sql.query(`INSERT INTO materias_prima (empresa, materi_prima, peso_inicial, peso_actual, peso_concurrente, medida_entrada, medida_salida, cantidad_alerta, fecha_registro)
+            VALUES
+            ('${empresa}', '${materi_prima}', ${peso_inicial}, ${peso_actual}, ${peso_concurrente}, '${medida_entrada}', '${medida_salida}', '${cantidad_alerta}', '${moment().format('YYYY-MM-DD HH:mm:ss')}')`)
         if (response[0].affectedRows > 0) {
             res.json({
                 success: true,
@@ -42,7 +44,7 @@ export const ListarMaterias = async (req, res) => {
                 msg: "Todos los campos son obligatorios"
             })
         }
-        const response = await sql.query(`SELECT * FROM materias_primas WHERE empresa = '${empresa}'`)
+        const response = await sql.query(`SELECT * FROM materias_prima WHERE empresa = '${empresa}'`)
         if (response[0].length > 0) {
             res.json({
                 success: true,
@@ -72,7 +74,7 @@ export const ListarMateriasPorId = async (req, res) => {
                 msg: "Todos los campos son obligatorios"
             })
         }
-        const response = await sql.query(`SELECT * FROM materias_primas WHERE empresa = '${empresa}' AND id = ${id}`)
+        const response = await sql.query(`SELECT * FROM materias_prima WHERE empresa = '${empresa}' AND id = ${id}`)
         if (response[0].length > 0) {
             res.json({
                 success: true,
@@ -94,7 +96,7 @@ export const ListarMateriasPorId = async (req, res) => {
 }
 
 export const ActualizarMateria = async (req, res) => {
-    const { id, empresa, materi_prima, peso_inicial, peso_actual, peso_concurrente } = req.body
+    const { id, empresa, materi_prima, peso_inicial, peso_actual, peso_concurrente, medida_entrada, medida_salida, cantidad_alerta } = req.body
     try {
         if( !empresa || !materi_prima || !peso_inicial || !peso_actual || !peso_concurrente ){
             return res.json({
@@ -102,7 +104,7 @@ export const ActualizarMateria = async (req, res) => {
                 msg: "Todos los campos son obligatorios"
             })
         }
-        const response = await sql.query(`UPDATE materias_primas SET materi_prima = '${materi_prima}', peso_inicial = ${peso_inicial}, peso_actual = ${peso_actual}, peso_concurrente = ${peso_concurrente}, fecha_registro = '${moment().format('YYYY-MM-DD HH:mm:ss')}' WHERE id = ${id} AND empresa = '${empresa}'`)
+        const response = await sql.query(`UPDATE materias_prima SET materi_prima = '${materi_prima}', peso_inicial = ${peso_inicial}, peso_actual = ${peso_actual}, peso_concurrente = ${peso_concurrente}, medida_entrada = '${medida_entrada}', medida_salida = '${medida_salida}', cantidad_alerta = '${cantidad_alerta}' WHERE id = ${id} AND empresa = '${empresa}'`)
         if (response[0].affectedRows > 0) {
             res.json({
                 success: true,
@@ -133,7 +135,7 @@ export async function EliminarMateriaPorId(req, res){
                 msg: "Todos los campos son obligatorios"
             })
         }
-        const response = await sql.query(`DELETE FROM materias_primas WHERE id = ${id} AND empresa = '${empresa}'`)
+        const response = await sql.query(`DELETE FROM materias_prima WHERE id = ${id} AND empresa = '${empresa}'`)
         if (response[0].affectedRows > 0) {
             res.json({
                 success: true,
