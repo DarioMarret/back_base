@@ -1,3 +1,4 @@
+import isEmpty from "is-empty"
 import { sql } from "../../database/conexion"
 
 
@@ -8,7 +9,8 @@ export const RegistrarMateria = async (req, res) => {
         peso_concurrente, medida_entrada, 
         medida_salida, cantidad_alerta } = req.body
     try {
-        if( !empresa || !materi_prima || !peso_inicial || !peso_actual || !peso_concurrente ){
+        console.log(req.body)
+        if(isEmpty(empresa) || isEmpty(materi_prima) || isEmpty(peso_inicial) || isEmpty(peso_actual) || isEmpty(peso_concurrente) ){
             return res.json({
                 success: false,
                 msg: "Todos los campos son obligatorios"
