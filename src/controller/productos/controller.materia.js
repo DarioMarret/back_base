@@ -3,7 +3,10 @@ import { sql } from "../../database/conexion"
 
 
 export const RegistrarMateria = async (req, res) => {
-    const { empresa, materi_prima, peso_inicial, peso_actual, peso_concurrente, medida_entrada, medida_salida, cantidad_alerta } = req.body
+    const { 
+        empresa, materi_prima, peso_inicial, peso_actual, 
+        peso_concurrente, medida_entrada, 
+        medida_salida, cantidad_alerta } = req.body
     try {
         if( !empresa || !materi_prima || !peso_inicial || !peso_actual || !peso_concurrente ){
             return res.json({
