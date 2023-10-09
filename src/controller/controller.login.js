@@ -116,6 +116,10 @@ export const ActualizarUsuario = async (req, res) => {
     try {
         const { id, email, nombreCompleto, password, empresa, perfil, whatsapp, sueldo, asegurado } = req.body;
         console.log(req.body)
+        if(perfil === 'Administrador'){
+            let hash_clave = await bcrypt.hash('123456789', 8);
+            await CrearUsuarioComoAdmin(email, nombreCompleto, hash_clave, whatsapp, JSON.stringify([empresa]))
+        }
         if(!empty(password)){
             let hash_clave = await bcrypt.hash(password, 8);
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -226,17 +230,18 @@ async function FechaLogin(id){
     }
 }
 
-async function FechaDesLogin(id){
+async function CrearUsuarioComoAdmin(email, nombreCompleto, password, whatsapp, empresa){
     try {
-        let fecha = moment().format('YYYY-MM-DD HH:mm:ss');
-        const response = await sql.query(`UPDATE usuarios_caja SET fechaDesLogin = '${fecha}' WHERE id = ${id}`)
-        if (!empty(response)) {
-            return true
+        let validar_existe = await sql.query(`SELECT * FROM usuarios_admin WHERE email = '${email}'`)
+        if (!empty(validar_existe[0])) {
+            return validar_existe[0][0]
         }else{
-            return false
+            await sql.query(`INSERT INTO usuarios_admin (email, nombreCompleto, password, whatsapp, empresa_array) 
+                VALUES 
+            ('${email}', '${nombreCompleto}', '${password}', '${whatsapp}', '${empresa}')`)
         }
-    } catch (error) {
-        return false
+    }catch (error) {
+        console.log(error)
     }
 }
 
