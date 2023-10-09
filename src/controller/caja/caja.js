@@ -1,13 +1,12 @@
-import empty from "is-empty"
+import empty from "is-empty";
 // import db from "../../database/conexion_sequelize"
 // import sequelize from "sequelize"
 // import Caja from "../../model/Caja/Caja";
 // import axios from 'axios'
-import { SacarTotalesVenta } from "../reporte/reporte";
 // import Reporte from "../../model/Reporte/Reporte";
 // import Movimiento from "../../model/Caja/Movimiento";
-import { sql } from "../../database/conexion";
 import moment from "moment";
+import { sql } from "../../database/conexion";
 import { CuadreIni, TotalMovimientos, TotalVentas, TotalVentasTarjeta, TotalVentasTransferencia } from "../../function/cuadreCaja";
 
 export async function ListarCajas(req, res) {
@@ -265,6 +264,27 @@ export async function IngresarMovimiento(req, res) {
         }
     } catch (error) {
         console.log("IngresarMovimiento",error)
+    }
+}
+
+export async function EliminarMovimiento(req, res) {
+    try {
+        const { id } = req.body
+        let query = `DELETE FROM movimiento WHERE id = ${id}`
+        const response = await sql.query(query)
+        if(response[0].affectedRows > 0){
+            res.json({
+                success: true,
+                msg: "Se elimino correctamente el movimiento"
+            })
+        }else{
+            res.json({
+                success: false,
+                msg: "No se elimino el movimiento"
+            })
+        }
+    } catch (error) {
+        console.log("EliminarMovimiento",error)
     }
 }
 

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import empty from 'is-empty';
+import { default as empty, default as isEmpty } from 'is-empty';
 import moment from 'moment';
 import { sql } from '../database/conexion';
 
@@ -542,6 +542,113 @@ export async function ActualizarAsistencia(req, res){
         res.json({
             success: false,
             msg: "Error al actualizar la asistencia",
+        })
+    }
+}
+
+// registrar anticipos de los usuarios
+export const RegistrarAnticipos = async (req, res) => {
+    const { empresa, id_usuario, monto, usuario } = req.body
+    try {
+        if(isEmpty(empresa) || isEmpty(id_usuario) || isEmpty(monto)){
+            return res.json({
+                success: false,
+                msg: "Todos los campos son obligatorios"
+            })
+        }
+        const response = await sql.query(`INSERT INTO anticipos (empresa, id_usuario, monto, mes, dia, estado, fecha_registro)
+            VALUES
+            ('${empresa}', ${id_usuario}, ${monto}, '${moment().format('MM')}', '${moment().format('DD')}', 'pendiente', '${moment().format('YYYY-MM-DD HH:mm:ss')}')`)
+        if (response[0].affectedRows > 0) {
+            // registrar tambien en la tabla de movimientos
+            let nombreCompleto = await sql.query(`SELECT nombreCompleto FROM usuarios_caja WHERE id = ${id_usuario}`)
+            let detalle = `Anticipo: ${nombreCompleto[0][0].nombreCompleto}`
+            let fechaCreacion = moment().format('DD/MM/YYYY')
+            let estado = "ACTIVO"
+            let fecha = moment().format('YYYY/MM/DD HH:mm:ss')
+            let query = `INSERT INTO movimiento (detalle, usuario, empresa, ingreso, salida, fecha, estado, fechaCreacion) 
+                VALUES
+            ('${detalle}', '${usuario}', '${empresa}', ${0.00}, ${monto}, '${fecha}', '${estado}', '${fechaCreacion}')`
+            await sql.query(query)
+            res.json({
+                success: true,
+                msg: "Anticipo registrado"
+            })
+        } else {
+            res.json({
+                success: false,
+                msg: "No se pudo registrar el anticipo"
+            })
+        }
+        
+    } catch (error) {
+        console.log("RegistrarAnticipos", error)
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}
+
+export const ListarAnticipos = async (req, res) => {
+    // listar todos anticipos por empresa y por mes unir con la tabla usuarios_caja para obtener el nombre del usuario
+    const { empresa, mes } = req.query
+    try {
+        if( !empresa || !mes ){
+            return res.json({
+                success: false,
+                msg: "Todos los campos son obligatorios"
+            })
+        }
+        const response = await sql.query(`SELECT anticipos.id, anticipos.id_usuario, anticipos.monto, anticipos.mes, anticipos.dia, anticipos.estado, usuarios_caja.nombreCompleto FROM anticipos INNER JOIN usuarios_caja ON anticipos.id_usuario = usuarios_caja.id WHERE anticipos.empresa = '${empresa}' AND anticipos.mes = ${mes}`)
+        if (response[0].length > 0) {
+            res.json({
+                success: true,
+                data: response[0]
+            })
+        } else {
+            res.json({
+                success: false,
+                msg: "No se pudo listar los anticipos"
+            })
+        }
+        
+    } catch (error) {
+        console.log("ListarAnticipos", error)
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}
+
+export const EliminarAnticipos = async (req, res) => {
+    const { id } = req.body
+    try {
+        if( !id ){
+            return res.json({
+                success: false,
+                msg: "Todos los campos son obligatorios"
+            })
+        }
+        const response = await sql.query(`DELETE FROM anticipos WHERE id = ${id}`)
+        if (response[0].affectedRows > 0) {
+            res.json({
+                success: true,
+                msg: "Anticipo eliminado"
+            })
+        } else {
+            res.json({
+                success: false,
+                msg: "No se pudo eliminar el anticipo"
+            })
+        }
+        
+    } catch (error) {
+        console.log("EliminarAnticipos", error)
+        res.json({
+            success: false,
+            data: error
         })
     }
 }
