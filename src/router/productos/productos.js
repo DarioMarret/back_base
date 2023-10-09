@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { ActualizarMateria, EliminarMateriaPorId, ListarMaterias, ListarMateriasPorId, RegistrarMateria } from '../../controller/productos/controller.materia'
+import { ActualizarMateria, EliminarMateriaPorId, ListarMaterias, ListarMateriasPorId, ListarMermaMateria, RegistrarMateria, RegistrarMermaMateria } from '../../controller/productos/controller.materia'
 import { CargarProductosDesdeExcel, CrearProductounitario, EditarProducto, EliminarProductoPorId, ListarProducto, ListarProductoConsiDencia, ListarProductosPorCategoria } from '../../controller/productos/productos'
 
 const routes = Router()
@@ -20,5 +20,9 @@ routes.put('/actualizar_materia_prima',ActualizarMateria)
 routes.get('/listar_materia_prima',ListarMaterias)
 routes.get('/listar_materia_prima_id',ListarMateriasPorId)
 routes.delete('/eliminar_materia_prima_id',EliminarMateriaPorId)
+
+//merma de la materia prima
+routes.post('/crear_merma_materia_prima',RegistrarMermaMateria)
+routes.get('/listar_merma_materia_prima_id',ListarMermaMateria)
 
 export default routes

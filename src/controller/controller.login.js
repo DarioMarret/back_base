@@ -11,10 +11,10 @@ export async function Login(req, res) {
             const x = await bcrypt.compare(password, response.password)
             if (x) {
                 const datos_empresa = await ExtraerDatosEmpresa(response.empresa)
+                response.password = undefined
                 let info = {
                     ...datos_empresa,
                     ...response,
-                    perfil:"caja"
                 }
                 await FechaLogin(response.id)
                 res.json({
@@ -44,7 +44,7 @@ export async function Login(req, res) {
 
 export async function CrearUsuario(req, res){
     try {
-        const { email, nombreCompleto, password, empresa, whatsapp, sueldo, asegurado  } = req.body;
+        const { email, nombreCompleto, password, empresa, whatsapp, perfil, sueldo, asegurado  } = req.body;
         const existe = await ValivarExisteEmail(email)
         if (existe){
             res.json({
@@ -55,9 +55,9 @@ export async function CrearUsuario(req, res){
             let hash_clave = await bcrypt.hash(password, 8);
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
             let empres = empresa.toLowerCase().replace(/ /g, '')
-            const response = await sql.query(`INSERT INTO usuarios_caja (email, nombreCompleto, password, empresa, whatsapp, fechaCreacion, sueldo, asegurado) 
+            const response = await sql.query(`INSERT INTO usuarios_caja (email, nombreCompleto, password, empresa, whatsapp, perfil, fechaCreacion, sueldo, asegurado) 
                 VALUES 
-            ('${email}', '${nombreCompleto}', '${hash_clave}', '${empres}', '${whatsapp}', '${fechaCreacion}', '${sueldo}', '${asegurado}')`)
+            ('${email}', '${nombreCompleto}', '${hash_clave}', '${empres}', '${whatsapp}', '${perfil}' '${fechaCreacion}', ${sueldo}, ${asegurado})`)
             if(!empty(response)){
                 res.json({
                     success: true,
@@ -114,13 +114,15 @@ export async function ListarUsuarios(req, res){
 
 export const ActualizarUsuario = async (req, res) => {
     try {
-        const { id, email, nombreCompleto, password, empresa, whatsapp, sueldo, asegurado } = req.body;
+        const { id, email, nombreCompleto, password, empresa, perfil, whatsapp, sueldo, asegurado } = req.body;
         console.log(req.body)
         if(!empty(password)){
             let hash_clave = await bcrypt.hash(password, 8);
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
             let empres = empresa.toLowerCase().replace(/ /g, '')
-            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', password = '${hash_clave}', empresa = '${empres}', whatsapp = '${whatsapp}', fechaCreacion = '${fechaCreacion}',  sueldo = '${sueldo}', asegurado = '${asegurado}'  WHERE id = ${id}`)
+            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}',
+            perfil = '${perfil}',
+            password = '${hash_clave}', empresa = '${empres}', whatsapp = '${whatsapp}', fechaCreacion = '${fechaCreacion}',  sueldo = ${sueldo}, asegurado = ${asegurado}  WHERE id = ${id}`)
             if(!empty(response)){
                 res.json({
                     success: true,
@@ -135,7 +137,9 @@ export const ActualizarUsuario = async (req, res) => {
         }else{
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
             let empres = empresa.toLowerCase().replace(/ /g, '')
-            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', empresa = '${empres}', whatsapp = '${whatsapp}', fechaCreacion = '${fechaCreacion}',  sueldo = '${sueldo}', asegurado = '${asegurado}'  WHERE id = ${id}`)
+            const response = await sql.query(`UPDATE usuarios_caja SET email = '${email}', nombreCompleto = '${nombreCompleto}', 
+            perfil = '${perfil}',
+            empresa = '${empres}', whatsapp = '${whatsapp}', fechaCreacion = '${fechaCreacion}',  sueldo = ${sueldo}, asegurado = ${asegurado}  WHERE id = ${id}`)
             if(!empty(response)){
                 res.json({
                     success: true,
@@ -442,9 +446,9 @@ export async function ListarAbonosUsuario(req, res){
 export async function RegistrarAsistencia(req, res){
     try {
         const { id, empresa } = req.body;
-        const response = await sql.query(`INSERT INTO asistencia (id_usuario, empresa, fecha, hora_ingreso, hora_salida)
+        const response = await sql.query(`INSERT INTO asistencias (id_usuario, empresa, mes, dia, fecha, hora_ingreso, hora_salida)
             VALUES
-        ('${id}', '${empresa}', '${moment().format('YYYY-MM-DD')}', '${moment().format('HH:mm:ss')}', '00:00:00')`)
+        ('${id}', '${empresa}', '${moment().format('MM')}', '${moment().format('DD')}', '${moment().format('YYYY-MM-DD')}', '${moment().format('HH:mm:ss')}', '00:00:00')`)
         if(!empty(response)){
             res.json({
                 success: true,
@@ -468,7 +472,7 @@ export async function RegistrarAsistencia(req, res){
 export async function ListarAsistencia(req, res){
     try {
         const { empresa } = req.body;
-        const response = await sql.query(`SELECT * FROM asistencia WHERE empresa = '${empresa}'`)
+        const response = await sql.query(`SELECT * FROM asistencias WHERE empresa = '${empresa}'`)
         if(!empty(response[0])){
             res.json({
                 success: true,
@@ -492,7 +496,7 @@ export async function ListarAsistencia(req, res){
 export async function ListarAsistenciaUsuario(req, res){
     try {
         const { id, empresa, mes } = req.body;
-        const response = await sql.query(`SELECT * FROM asistencia WHERE id_usuario = ${id} AND empresa = '${empresa}' AND MONTH(fecha) = ${mes}`)
+        const response = await sql.query(`SELECT * FROM asistencias WHERE id_usuario = ${id} AND empresa = '${empresa}' AND MONTH(fecha) = ${mes}`)
         if(!empty(response[0])){
             res.json({
                 success: true,
@@ -516,7 +520,7 @@ export async function ListarAsistenciaUsuario(req, res){
 export async function ActualizarAsistencia(req, res){
     try {
         const { id } = req.body;
-        const response = await sql.query(`UPDATE asistencia SET hora_salida = '${moment().format('HH:mm:ss')}' WHERE id = ${id}`)
+        const response = await sql.query(`UPDATE asistencias SET hora_salida = '${moment().format('HH:mm:ss')}' WHERE id = ${id}`)
         if(!empty(response)){
             res.json({
                 success: true,

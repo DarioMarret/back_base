@@ -24,3 +24,26 @@ export const ListarPerfil = async (req, res) => {
         })
     }
 }
+
+export const ListarMedidas = async (req, res) => {
+    try {
+        const response = await sql.query(`SELECT * FROM medidas`)
+        if (response[0].length > 0) {
+            res.json({
+                success: true,
+                data: response[0]
+            })
+        } else {
+            res.json({
+                success: false,
+                data: []
+            })
+        }
+    } catch (error) {
+        console.log("ListarMedidas", error)
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}

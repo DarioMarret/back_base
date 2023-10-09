@@ -1,23 +1,23 @@
-import express from 'express';
-import morgan from 'morgan';
 import cors from 'cors';
-import path from 'path';
+import express from 'express';
 import fileUpload from 'express-fileupload';
+import morgan from 'morgan';
+import path from 'path';
 
-import 'dotenv/config'
-import './database/conexion'
-import './function/CrearReporte'
+import 'dotenv/config';
+import './database/conexion';
+import './function/CrearReporte';
 
-import Login from './router/login/login'
-import Productos from './router/productos/productos'
-import Reporte from './router/reporte/reporte'
-import Caja from './router/caja/caja'
-import Empresa from './router/Empresa/empresa'
-import Categoria from './router/categoria/categoria'
-import Vizor from './router/vizor/vizor'
+import Empresa from './router/Empresa/empresa';
+import Caja from './router/caja/caja';
+import Categoria from './router/categoria/categoria';
+import Default from './router/default/default';
+import Login from './router/login/login';
+import Productos from './router/productos/productos';
+import Reporte from './router/reporte/reporte';
+import Vizor from './router/vizor/vizor';
 
-import Newlogin from './router/login/newLogin'
-import { ListarMovimientoAdminFechas } from './controller/caja/caja';
+import Newlogin from './router/login/newLogin';
 
 // (async ()=>{
 //     await ListarMovimientoAdminFechas()
@@ -47,6 +47,7 @@ app.use("/v1",Productos)
 app.use("/v1",Empresa)
 app.use("/v1",Categoria)
 app.use("/v1",Vizor)
+app.use("/v1",Default)
 
 
 

@@ -1,5 +1,5 @@
+import bcrypt from 'bcrypt';
 import empty from 'is-empty';
-import bcrypt from 'bcrypt'
 import { sql } from '../../database/conexion';
 
 export async function ValidarLogin(req, res) {
@@ -15,7 +15,7 @@ export async function ValidarLogin(req, res) {
                     ...datos_empresa,
                     ...response,
                     empresa: JSON.parse(response.empresa_array),
-                    perfil:"administrador",
+                    perfil:"Administrador",
                     logos: datos_empresa
                 }
                 res.json({
