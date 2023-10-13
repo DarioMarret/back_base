@@ -225,20 +225,33 @@ export async function SacarTotalesVenta(empresa, fecha_ini, fecha_fin, estado) {
 export async function ListarReporteAdmin(req, res) {
     try {
         const { empresa, fecha_ini, fecha_fin } = req.query
+        // let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago, caja_usuario
+        // FROM ventas  
+        // WHERE empresa = '${empresa}' AND fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}' GROUP BY secuencia, fecha, empresa, estado, forma_pago, fecha, caja_usuario`;
+
+        // filtrar solo por fecha y empresa
         let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago, caja_usuario
         FROM ventas  
         WHERE empresa = '${empresa}' AND fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}' GROUP BY secuencia, fecha, empresa, estado, forma_pago, fecha, caja_usuario`;
         const respuesta = await sql.query(query)
         if (!empty(respuesta[0])) {
+            var reporte = []
+            // sacar todo lo que este en el rango de fecha_ini y fecha_fin
+            for (let index = 0; index < respuesta[0].length; index++) {
+                const element = respuesta[0][index];
+                if(element.fecha >= fecha_ini && element.fecha <= fecha_fin){
+                    reporte.push(element)
+                }
+            }
             res.json({
                 success: true,
-                data: respuesta[0],
+                data: reporte[0],
                 msg: "reporte actual"
             })
         }else{
             res.json({
                 success: false,
-                data: respuesta[0],
+                data: [],
                 msg: "no se encontro reporte"
             })
         }
