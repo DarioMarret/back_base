@@ -245,7 +245,7 @@ export async function ListarReporteAdmin(req, res) {
             }
             res.json({
                 success: true,
-                data: reporte[0],
+                data: reporte,
                 msg: "reporte actual"
             })
         }else{
