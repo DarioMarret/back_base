@@ -6,12 +6,13 @@ import path from 'path';
 
 import 'dotenv/config';
 import './database/conexion';
-import './function/CrearReporte';
+// import './function/CrearReporte';
 
 import Empresa from './router/Empresa/empresa';
 import Caja from './router/caja/caja';
 import Categoria from './router/categoria/categoria';
 import Default from './router/default/default';
+import Dash from './router/login/dash_login';
 import Login from './router/login/login';
 import Productos from './router/productos/productos';
 import Reporte from './router/reporte/reporte';
@@ -48,6 +49,7 @@ app.use("/v1",Empresa)
 app.use("/v1",Categoria)
 app.use("/v1",Vizor)
 app.use("/v1",Default)
+app.use("/v1",Dash)
 
 
 

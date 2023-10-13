@@ -7,7 +7,9 @@ export async function ValidarLogin(req, res) {
         const { email, password } = req.body;
         const response = await ValivarExisteEmail(email)
         if (response) {
+            console.log("response--->",response)
             const x = await bcrypt.compare(password, response.password)
+            console.log("x--->",x)
             if (x) {
                 const datos_empresa = await ExtraerDatosEmpresa(response.empresa_array)
                 console.log("datos_empresa--->",datos_empresa)

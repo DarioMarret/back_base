@@ -55,9 +55,13 @@ export async function CrearUsuario(req, res){
             let hash_clave = await bcrypt.hash(password, 8);
             let fechaCreacion = moment().format('YYYY-MM-DD HH:mm:ss');
             let empres = empresa.toLowerCase().replace(/ /g, '')
+            if(perfil === 'Administrador'){
+                // sacar la password de usuario_caja y crearlo en la tabla de usuarios_admin
+                await CrearUsuarioComoAdmin(email, nombreCompleto, hash_clave, whatsapp, JSON.stringify([empresa]))
+            }
             const response = await sql.query(`INSERT INTO usuarios_caja (email, nombreCompleto, password, empresa, whatsapp, perfil, fechaCreacion, sueldo, asegurado) 
                 VALUES 
-            ('${email}', '${nombreCompleto}', '${hash_clave}', '${empres}', '${whatsapp}', '${perfil}' '${fechaCreacion}', ${sueldo}, ${asegurado})`)
+            ('${email}', '${nombreCompleto}', '${hash_clave}', '${empres}', '${whatsapp}', '${perfil}', '${fechaCreacion}', ${sueldo}, ${asegurado})`)
             if(!empty(response)){
                 res.json({
                     success: true,
@@ -117,8 +121,10 @@ export const ActualizarUsuario = async (req, res) => {
         const { id, email, nombreCompleto, password, empresa, perfil, whatsapp, sueldo, asegurado } = req.body;
         console.log(req.body)
         if(perfil === 'Administrador'){
-            let hash_clave = await bcrypt.hash('123456789', 8);
-            await CrearUsuarioComoAdmin(email, nombreCompleto, hash_clave, whatsapp, JSON.stringify([empresa]))
+            // sacar la password de usuario_caja y crearlo en la tabla de usuarios_admin
+            let clave = await sql.query(`SELECT password FROM usuarios_caja WHERE id = ${id}`)
+            let contra = clave[0][0].password
+            await CrearUsuarioComoAdmin(email, nombreCompleto, contra, whatsapp, JSON.stringify([empresa]))
         }
         if(!empty(password)){
             let hash_clave = await bcrypt.hash(password, 8);

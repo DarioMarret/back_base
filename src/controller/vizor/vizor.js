@@ -155,6 +155,7 @@ export const EliminarOrden = async (req, res) => {
 export const ListarMesas = async (req, res) => {
     const { empresa } = req.body
     try {
+        console.log("empresa: ",empresa)
         let query = `SELECT * FROM mesas WHERE empresa = '${empresa}'`
         const response = await sql.query(query)
         res.json({
@@ -170,23 +171,29 @@ export const ListarMesas = async (req, res) => {
 }
 
 export const RegistrarMesa = async (req, res) => {
-    const { empresa, numero_mesa } = req.body
+    const { empresa } = req.body
     try {
-        // no se permite registrar una mesa con el mismo numero
-        let me = `SELECT * FROM mesas WHERE empresa = '${empresa}' AND numero_mesa = '${numero_mesa}'`
-        const result = await sql.query(me)
-        if (result[0].length > 0 && result[0][0].numero_mesa == numero_mesa) {
+        // ver cual es el ultimo numero de mesa de la empresa y sumarle 1
+        let sum_mesa = `SELECT * FROM mesas WHERE empresa = '${empresa}' ORDER BY id DESC LIMIT 1`
+        const response = await sql.query(sum_mesa)
+        var numero_mesa = 1
+        if (response[0].length > 0) {
+            numero_mesa = response[0][0].numero_mesa + 1
+            let query = `INSERT INTO mesas (empresa, numero_mesa) VALUES ('${empresa}', '${numero_mesa}')`
+            await sql.query(query)
             return res.json({
-                success: false,
-                data: 'Ya existe una mesa con el mismo numero'
+                success: true,
+                data: "Mesa registrada con exito"
+            })
+
+        }else{
+            let query = `INSERT INTO mesas (empresa, numero_mesa) VALUES ('${empresa}', '${numero_mesa}')`
+            await sql.query(query)
+            return res.json({
+                success: true,
+                data: "Mesa registrada con exito"
             })
         }
-        let query = `INSERT INTO mesas (empresa, numero_mesa) VALUES ('${empresa}', '${numero_mesa}')`
-        const response = await sql.query(query)
-        res.json({
-            success: true,
-            data: response
-        })
     } catch (error) {
         res.json({
             success: false,
@@ -207,7 +214,6 @@ export const EliminarMesa = async (req, res) => {
                 data: 'La mesa no se puede eliminar porque tiene ordenes activas'
             })
         }
-
         let query = `DELETE FROM mesas WHERE empresa = '${empresa}' AND id = '${id}'`
         await sql.query(query)
         res.json({

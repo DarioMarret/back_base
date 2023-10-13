@@ -54,9 +54,10 @@ export const EmitidosSecuencia = async (req, res) => {
 
 export async function ListarReporteActual(req, res) {
     try {
-        const { empresa, fecha } = req.query
+        const { empresa, fecha, fecha_fin } = req.query
         let estado = "CUADRE"
-        let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago FROM ventas  WHERE empresa = '${empresa}' AND fecha = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha, estado, forma_pago`;
+        let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago FROM ventas 
+        WHERE empresa = '${empresa}' AND fecha = '${fecha}' AND estado != '${estado}' GROUP BY secuencia, empresa, fecha, estado, forma_pago`;
         const respuesta = await sql.query(query)
         if (!empty(respuesta[0])) {
             res.json({
