@@ -81,6 +81,7 @@ export async function CrearVenta(req, res) {
     const { empresa, tienda, secuencial, caja_usuario, forma_pago, contador } = req.body;
     var count = 0;
     let fecha = moment().format("DD/MM/YYYY");
+    console.log("fecha: ",moment().format("DD/MM/YYYY HH:mm:ss"))
     for (var index = 0; index < tienda.length; index++) {
         const { producto, cantidad, precio_venta } = tienda[index];
         await sql.query(`INSERT INTO ventas 
