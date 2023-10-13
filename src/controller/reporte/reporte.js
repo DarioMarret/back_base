@@ -225,7 +225,7 @@ export async function SacarTotalesVenta(empresa, fecha_ini, fecha_fin, estado) {
 export async function ListarReporteAdmin(req, res) {
     try {
         const { empresa, fecha_ini, fecha_fin } = req.query
-        let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago, fecha, caja_usuario
+        let query = `SELECT secuencia, fecha, empresa, sum(precio_venta * cantidad) AS total, estado, forma_pago, caja_usuario
         FROM ventas  
         WHERE empresa = '${empresa}' AND fecha BETWEEN '${fecha_ini}' AND '${fecha_fin}' GROUP BY secuencia, fecha, empresa, estado, forma_pago, fecha, caja_usuario`;
         const respuesta = await sql.query(query)
