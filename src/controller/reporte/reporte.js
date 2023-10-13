@@ -239,7 +239,7 @@ export async function ListarReporteAdmin(req, res) {
             // sacar todo lo que este en el rango de fecha_ini y fecha_fin
             for (let index = 0; index < respuesta[0].length; index++) {
                 const element = respuesta[0][index];
-                if(element.fecha >= fecha_ini && element.fecha <= fecha_fin){
+                if(element.fecha == fecha_ini && element.fecha <= fecha_fin){
                     reporte.push(element)
                 }
             }
