@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { ActualizarCantidadOpt, CambiarEstadoMesa, EliminarItemsOrden, EliminarMesa, EliminarOrden, EliminarProductoOrden, ListarMesas, ListarOrdenes, ListarOrdenesPorEmpresaMesa, RegistrarMesa, RegistrarOrden } from '../../controller/vizor/vizor'
+import { ActualizarCantidadOpt, ActualizarTotalMesa, CambiarEstadoMesa, EliminarItemsOrden, EliminarMesa, EliminarOrden, EliminarProductoOrden, ListarMesas, ListarOrdenes, ListarOrdenesPorEmpresaMesa, RegistrarMesa, RegistrarOrden } from '../../controller/vizor/vizor'
 
 const routes = Router()
 
@@ -15,6 +15,7 @@ routes.delete('/elimina_orden/:id/:cantidad', EliminarItemsOrden)
 routes.post('/actualizar_cantidad_opt',ActualizarCantidadOpt)
 routes.post('/atender_mesa', CambiarEstadoMesa)
 routes.post('/listar_orden_empresa_mesa',ListarOrdenesPorEmpresaMesa)
+routes.post('/actualizar_total_mesa',ActualizarTotalMesa)
 
 
 

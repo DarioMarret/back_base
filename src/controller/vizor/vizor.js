@@ -247,6 +247,23 @@ export const ActualizarCantidadOpt = async (req, res) => {
     }
 }
 
+export const ActualizarTotalMesa = async (req, res) => {
+    const { id, total } = req.body
+    try {
+        let query = `UPDATE mesas SET total = ${total} WHERE id = ${id}`
+        const response = await sql.query(query)
+        res.json({
+            success: true,
+            data: response
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            data: error
+        })
+    }
+}
+
 export const CambiarEstadoMesa = async (req, res) => {
     const { id, estado, mesero, ceder } = req.body
     try {
