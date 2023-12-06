@@ -4,7 +4,6 @@ WORKDIR /BACKEND_PUNTOVENTA
 
 COPY .babelrc ./
 
-COPY index.js ./
 
 COPY package*.json ./
 
