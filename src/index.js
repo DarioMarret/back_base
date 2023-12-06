@@ -24,7 +24,7 @@ import Newlogin from './router/login/newLogin';
 //     await ListarMovimientoAdminFechas()
 // })()
 const app = express();
-const port =3001 
+const port =process.env.PORT || 3000 
 // process.env.PORT;
 
 
